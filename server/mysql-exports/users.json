@@ -1,0 +1,182 @@
+[
+  {
+    "id": 2,
+    "name": "test1 ",
+    "email": "test1@gmail.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$r0cxRHczSF1QEu5usMZ+qg$sNcea6/IuJjJHWxU/AQi16YcXrBkY4QFbd7MuNyOBV0",
+    "created_at": "2025-09-07T11:30:56.000Z",
+    "updated_at": "2025-09-07T11:30:56.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 3,
+    "name": "user2",
+    "email": "user2@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$LFPQtrcRIMC2iXtCQpkVyw$v6we9cnVV8nbQCuZuEZYEi/Og/n+xOUji8y3HoNbSDc",
+    "created_at": "2025-09-10T11:16:22.000Z",
+    "updated_at": "2025-09-30T10:43:42.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 4,
+    "name": "user3",
+    "email": "user3@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$+u+WW7zhnVC55gsupj8NUg$zBWnIHN8k00MLLk9FOmHizsUEHpA7ItsyFrMvQqlvB0",
+    "created_at": "2025-09-25T13:11:55.000Z",
+    "updated_at": "2025-10-03T07:10:42.000Z",
+    "is_email_valid": 1
+  },
+  {
+    "id": 5,
+    "name": "user4",
+    "email": "user4@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$lEBnSZthZFXxLsM7gxWADg$NHb9K1BQYDxWJL7axSGkyLxh84fYBA3wiH1QW9h9QY4",
+    "created_at": "2025-09-25T13:20:52.000Z",
+    "updated_at": "2025-10-01T18:07:39.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 6,
+    "name": "User 5",
+    "email": "user5@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$r1VsmL8caV9hEOQLdbdGkw$7Cu2RKkuCCvwhitSfUx1NHlO+lu25WzgJZwrs2Fjcko",
+    "created_at": "2025-09-25T13:22:27.000Z",
+    "updated_at": "2025-10-03T12:19:11.000Z",
+    "is_email_valid": 1
+  },
+  {
+    "id": 7,
+    "name": "User 6",
+    "email": "user6@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$kLN1mIzPqKg9ryzUeiuWsA$xrVnRGUXM0orP7YKCd/NshOlQm5sh3rKMXKeczwSqyI",
+    "created_at": "2025-10-03T12:46:45.000Z",
+    "updated_at": "2025-10-03T12:46:45.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 8,
+    "name": "user7",
+    "email": "user7@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$k7ldXJ5hd/EW374E0ExAXw$Je2A681qBWknhuShxv11vrDWShd/1/m/xsw81t6j5hM",
+    "created_at": "2025-10-03T12:47:02.000Z",
+    "updated_at": "2025-10-03T12:47:02.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 9,
+    "name": "Aditya Pandey Aditya Pandey",
+    "email": "aditya1@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$gtHZBuxiizW1riVpea2WDg$sRdJMw2uG48zB+mv3yU8JhOHf9Y31zisGzoJd4tBi/M",
+    "created_at": "2025-10-03T12:49:51.000Z",
+    "updated_at": "2025-10-03T12:50:18.000Z",
+    "is_email_valid": 1
+  },
+  {
+    "id": 10,
+    "name": "Aditya Pandey Aditya Pandey",
+    "email": "aditya2@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$X2CypoNx1UPELWrpGXlzPQ$wO4WVzpCpvD4TFbLH0yjGrG/v7iKJGKzt3Vi7ZCHyGM",
+    "created_at": "2025-10-03T12:52:39.000Z",
+    "updated_at": "2025-10-03T12:52:39.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 11,
+    "name": "anon",
+    "email": "anon1@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$tstpiZnpfqGwAuW44VwSoA$2+YI9hrjeGoqXcJDpwEw6bCIHzx7ZATs0mpY9EmlQL4",
+    "created_at": "2025-10-03T13:55:54.000Z",
+    "updated_at": "2025-10-03T13:55:54.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 12,
+    "name": "anon2",
+    "email": "anon2@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$oFUHN2R8D7VK/3bmG9ASXQ$j4CVT+U1ddrtjy/ppF1JDjEm0LVVymsugB2Brg63dTc",
+    "created_at": "2025-10-03T13:57:35.000Z",
+    "updated_at": "2025-10-03T13:57:35.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 13,
+    "name": "anon3",
+    "email": "anon3@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$apqgSnorMnrwe0OhhTekxA$qM1GQmBAFLWLMcYrjCaAcB16HjULxIJ9g2vxYEONbY8",
+    "created_at": "2025-10-03T13:58:04.000Z",
+    "updated_at": "2025-10-03T13:58:04.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 14,
+    "name": "asdaad",
+    "email": "assdd@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$ih8BYwa1o0aBvSu6B4bRRg$czjoFudewscF3aMF5m2fiqQnaWSW8+cwsK0nv6+MOEM",
+    "created_at": "2025-10-03T14:00:08.000Z",
+    "updated_at": "2025-10-03T14:00:24.000Z",
+    "is_email_valid": 1
+  },
+  {
+    "id": 15,
+    "name": "anon9",
+    "email": "anon5@email.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$Wz9yXkMLhbU9LQYSLgiYwA$pcKrENejn7376oeBSrYJvMwnvjKz9QN0KHMLU1Pb1ew",
+    "created_at": "2025-10-03T14:07:09.000Z",
+    "updated_at": "2025-10-03T14:07:09.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 16,
+    "name": "Aditya Pandey",
+    "email": "adityapandey.2402@gmail.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$nLDZv1R9SQ9UFL9KI6hCmg$DPRYfNxDusiHXZlRH4hlyz47QqXB8S12Enp2lPmXWgk",
+    "created_at": "2025-10-04T10:32:43.000Z",
+    "updated_at": "2025-10-07T11:28:31.000Z",
+    "is_email_valid": 1
+  },
+  {
+    "id": 17,
+    "name": "Aditya Pandey",
+    "email": "ap039972@gmail.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$oP/3WXt7gsnWAhHmIxHXsQ$QPg8oRPP2xT5QSYr9y9b3PMNu7JiD4I+aQFWab1+vQo",
+    "created_at": "2025-10-04T10:38:54.000Z",
+    "updated_at": "2025-10-04T10:38:54.000Z",
+    "is_email_valid": 0
+  },
+  {
+    "id": 18,
+    "name": "Aditya Pandey",
+    "email": "ce4032022@niamt.ac.in",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$MaNnyygpTCxEktjePyZyUg$NEu7/i4zdoTG4Qnx75R2WEtelgyKSA1adMJequ4PIjk",
+    "created_at": "2025-10-04T10:39:55.000Z",
+    "updated_at": "2025-10-04T10:43:47.000Z",
+    "is_email_valid": 1
+  },
+  {
+    "id": 19,
+    "name": "ILC CE",
+    "email": "ilc.ce.niamt@gmail.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$JrW5stssyk1hI0uEiWysSg$wzYLUBeYdsx0h67233NKw+IOJBX275RJA1gLghRKaKs",
+    "created_at": "2025-10-06T05:00:41.000Z",
+    "updated_at": "2025-10-06T05:00:41.000Z",
+    "is_email_valid": 1
+  },
+  {
+    "id": 20,
+    "name": "Aditya",
+    "email": "ernstadi79@gmail.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$9/FZNmymUIdUcOwKP2xPyQ$br9m/k2MyOOOLomQEnYF9JnRq1SYz4gNFKoEOZz3msw",
+    "created_at": "2025-10-07T11:13:20.000Z",
+    "updated_at": "2025-10-07T11:18:42.000Z",
+    "is_email_valid": 1
+  },
+  {
+    "id": 21,
+    "name": "khushi",
+    "email": "infokhushi8382@gmail.com",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$hrcFxQ1dX9NHPxttoz6X4w$2GjhNHVfjGczOW5mGEDYZCaQd0dfkKqdshBZUPjLR+M",
+    "created_at": "2025-10-07T11:22:35.000Z",
+    "updated_at": "2025-10-07T11:27:09.000Z",
+    "is_email_valid": 1
+  }
+]
