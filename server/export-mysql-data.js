@@ -21,7 +21,7 @@ async function exportData() {
 
     // Connect to MySQL
     connection = await mysql.createConnection(mysqlConfig);
-    console.log('✓ Connected to MySQL');
+    console.log('Connected to MySQL');
 
     // Get all tables
     const [tables] = await connection.query('SHOW TABLES');
@@ -36,7 +36,7 @@ async function exportData() {
       const [rows] = await connection.query(`SELECT * FROM ${tableName}`);
       
       if (rows.length === 0) {
-        console.log(`  ⚠ Table ${tableName} is empty, skipping`);
+        console.log(`  Table ${tableName} is empty, skipping`);
         continue;
       }
 
@@ -47,11 +47,11 @@ async function exportData() {
       console.log(`  ✓ Exported ${rows.length} rows to ${filePath}`);
     }
 
-    console.log('\n✅ Export completed successfully!');
+    console.log('\nExport completed successfully!');
     console.log(`\nExported files are in: ${path.resolve(exportDir)}`);
     
   } catch (error) {
-    console.error('❌ Export failed:', error.message);
+    console.error(' Export failed:', error.message);
     process.exit(1);
   } finally {
     if (connection) await connection.end();
