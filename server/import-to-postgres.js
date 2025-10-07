@@ -15,7 +15,7 @@ async function importData() {
   const client = await pool.connect();
   
   try {
-    console.log('✓ Connected to PostgreSQL (Supabase)\n');
+    console.log('Connected to PostgreSQL (Supabase)\n');
 
     const exportDir = './mysql-exports';
     
@@ -34,14 +34,14 @@ async function importData() {
       const filePath = path.join(exportDir, `${tableName}.json`);
       
       if (!fs.existsSync(filePath)) {
-        console.log(`⚠ No export file for ${tableName}, skipping`);
+        console.log(`No export file for ${tableName}, skipping`);
         continue;
       }
 
       const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
       
       if (data.length === 0) {
-        console.log(`⚠ Table ${tableName} has no data, skipping`);
+        console.log(`Table ${tableName} has no data, skipping`);
         continue;
       }
 
@@ -79,7 +79,7 @@ async function importData() {
             // Skip rows with invalid user_id
             const userId = row.userId || row.user_id;
             if (!userId || userId === 0) {
-              console.log(`  ⚠ Skipping short_link ${row.id} with invalid user_id: ${userId}`);
+              console.log(`Skipping short_link ${row.id} with invalid user_id: ${userId}`);
               continue;
             }
             
@@ -118,14 +118,14 @@ async function importData() {
           break;
       }
 
-      console.log(`  ✓ Imported ${data.length} rows into ${tableName}`);
+      console.log(`Imported ${data.length} rows into ${tableName}`);
     }
 
     await client.query('COMMIT');
-    console.log('\n✅ All data imported successfully!');
+    console.log('\n All data imported successfully!');
     
     // Show summary
-    console.log('\n📊 Summary:');
+    console.log('\n Summary:');
     const tables = ['users', 'sessions', 'short_links', 'oauth_accounts', 'is_email_valid'];
     for (const table of tables) {
       const result = await client.query(`SELECT COUNT(*) FROM ${table}`);
@@ -134,7 +134,7 @@ async function importData() {
 
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error('\n❌ Import failed:', error.message);
+    console.error('\n Import failed:', error.message);
     console.error('Details:', error);
     process.exit(1);
   } finally {
