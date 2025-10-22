@@ -54,7 +54,7 @@ export const apiRegister = async (req, res) => {
 
         // Hash password and create user
         const hashedPassword = await hashPassword(password);
-        const [user] = await createUser({ name, email, password: hashedPassword });
+        const user = await createUser({ name, email, password: hashedPassword });
 
         // Authenticate user (sets cookies)
         await authenticateUser({ req, res, user, name, email });

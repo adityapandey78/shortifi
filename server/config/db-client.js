@@ -10,10 +10,13 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false // Required for Supabase and most cloud databases
   },
-  // Connection pool settings for better reliability
-  max: 20, // Maximum number of connections
+  // Connection pool settings for better reliability with Supabase
+  max: 10, // Maximum number of connections (Supabase pooler limit)
+  min: 2, // Keep at least 2 connections alive
   idleTimeoutMillis: 30000, // Close idle connections after 30 seconds
-  connectionTimeoutMillis: 10000, // Wait 10 seconds before timing out
+  connectionTimeoutMillis: 30000, // Wait 30 seconds before timing out (increased for Supabase)
+  query_timeout: 30000, // Query timeout 30 seconds
+  statement_timeout: 30000, // Statement timeout 30 seconds
 });
 
 // Test connection
