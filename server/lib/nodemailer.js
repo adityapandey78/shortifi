@@ -16,7 +16,16 @@ const transporter = nodemailer.createTransport({
   // }
 });
 
-await transporter.verify();
+// Verify SMTP connection in background (non-blocking)
+// Only logs warning if connection fails, doesn't crash the server
+transporter.verify((error, success) => {
+  if (error) {
+    console.warn('[SMTP] Connection failed. Email sending will not work:', error.message);
+    console.warn('[SMTP] To fix: Configure SMTP settings in .env file (SMTP_USER, SMTP_PASS)');
+  } else {
+    console.log('[SMTP] Connection verified - Email service ready');
+  }
+});
 
 export const sendEmail = async ({ to, subject, html, text, unsubscribeUrl }) => {
   try {
