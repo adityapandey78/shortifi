@@ -9,6 +9,8 @@ import RouterUrl from "./routes/shortner.routes.js";
 import { db } from "./config/db-client.js";
 import { env } from "./config/env.js";
 import { authRoutes } from "./routes/auth.routes.js";
+import { apiAuthRoutes } from "./routes/api-auth.routes.js";
+import { apiShortnerRoutes } from "./routes/api-shortner.routes.js";
 import { sql } from "drizzle-orm";
 import { verifyAuthentication } from "./middlewares/verify-auth.middleware.js";
 
@@ -23,6 +25,7 @@ app.set("views", path.join(process.cwd(), "views"));
 // Middleware setup
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // Add JSON body parser for API routes
 
 // Cookie parser must come before session and auth middleware
 app.use(cookieParser());
@@ -51,7 +54,25 @@ app.use((req, res, next) => {
   next();
 });
 
-// Register routes
+// CORS middleware for API routes (allow React frontend)
+app.use("/api", (req, res, next) => {
+  res.header("Access-Control-Allow-Origin", env.FRONTEND_URL || "http://localhost:5173");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  
+  // Handle preflight requests
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// Register API routes (JSON responses for React frontend)
+app.use("/api/auth", apiAuthRoutes);
+app.use("/api/links", apiShortnerRoutes);
+
+// Register traditional routes (HTML/EJS responses)
 app.use(authRoutes);
 app.use("/", RouterUrl);
 
