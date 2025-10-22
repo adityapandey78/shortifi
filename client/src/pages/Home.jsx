@@ -35,13 +35,13 @@ export function HomePage() {
 
   const fetchLinks = async () => {
     try {
-      // Note: This would need to be parsed from the HTML response or use a JSON endpoint
-      // For now, we'll show a placeholder
       const response = await getAllLinks()
-      // Parse links from response if needed
-      setLinks([])
+      if (response.success && response.links) {
+        setLinks(response.links)
+      }
     } catch (error) {
       console.error('Failed to fetch links:', error)
+      setLinks([])
     }
   }
 
@@ -264,6 +264,84 @@ export function HomePage() {
                 </Card>
               </motion.div>
             ))}
+          </motion.div>
+        )}
+
+        {/* User's Recent Links */}
+        {isAuthenticated && links.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="max-w-4xl mx-auto"
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Recent Links</CardTitle>
+                <CardDescription>
+                  Manage your shortened URLs
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {links.map((link) => (
+                  <motion.div
+                    key={link.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors group"
+                  >
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={link.shortUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-lg font-mono font-semibold text-primary hover:underline flex items-center gap-1"
+                        >
+                          {link.shortUrl}
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </div>
+                      <p className="text-sm text-muted-foreground truncate flex items-center gap-2">
+                        <Link2 className="h-3 w-3" />
+                        {truncate(link.url, 60)}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleCopy(link.shortCode)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        {copiedId === link.shortCode ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(link.id)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
+                
+                <div className="flex justify-center pt-4">
+                  <Link to="/dashboard">
+                    <Button variant="outline" className="gap-2">
+                      View All Links
+                      <ExternalLink className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
           </motion.div>
         )}
 
