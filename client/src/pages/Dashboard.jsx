@@ -4,10 +4,11 @@ import { Link, Edit, Trash2, Copy, Check, ExternalLink, Calendar } from 'lucide-
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
-import { deleteShortLink } from '@/services/shortener.service'
+import { deleteShortLink, getAllLinks } from '@/services/shortener.service'
 import { useStore } from '@/store/useStore'
 import { copyToClipboard, formatDate, extractDomain } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
+import { EditLinkDialog } from '@/components/EditLinkDialog'
 
 /**
  * Dashboard Page Component
@@ -27,15 +28,30 @@ export function DashboardPage() {
       navigate('/login')
       return
     }
-    // In a real implementation, fetch links from API
-    // For now, showing placeholder data
-    setTimeout(() => {
-      setLinks([
-        // Placeholder data - replace with actual API call
-      ])
-      setIsLoading(false)
-    }, 500)
+    fetchLinks()
   }, [isAuthenticated, navigate])
+
+  const fetchLinks = async () => {
+    try {
+      setIsLoading(true)
+      const response = await getAllLinks()
+      if (response.success && response.links) {
+        setLinks(response.links)
+      } else {
+        setLinks([])
+      }
+    } catch (error) {
+      console.error('Failed to fetch links:', error)
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || error.message || 'Failed to load links',
+        variant: 'destructive',
+      })
+      setLinks([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleCopy = async (shortCode) => {
     const url = `${window.location.origin}/${shortCode}`
@@ -57,11 +73,12 @@ export function DashboardPage() {
         title: 'Deleted',
         description: 'Short link has been deleted',
       })
-      setLinks(links.filter(link => link.id !== id))
+      fetchLinks() // Refetch the updated list
     } catch (error) {
+      console.error('Failed to delete link:', error)
       toast({
         title: 'Error',
-        description: 'Failed to delete link',
+        description: error.response?.data?.message || error.message || 'Failed to delete link',
         variant: 'destructive',
       })
     }
@@ -111,35 +128,36 @@ export function DashboardPage() {
           </Card>
         </motion.div>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-2">
           {links.map((link, index) => (
             <motion.div
               key={link.id}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.05 }}
             >
-              <Card className="hover:shadow-lg transition-all">
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex-1 space-y-2">
+              <Card className="hover:shadow-md transition-all">
+                <CardContent className="p-3">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                    <div className="flex-1 space-y-1">
                       <div className="flex items-center gap-2">
-                        <code className="px-3 py-1 bg-primary/10 text-primary rounded-md font-mono text-sm">
+                        <code className="px-2 py-0.5 bg-primary/10 text-primary rounded font-mono text-xs">
                           {window.location.origin}/{link.shortCode}
                         </code>
                         <Button
                           size="icon"
                           variant="ghost"
                           onClick={() => handleCopy(link.shortCode)}
+                          className="h-7 w-7"
                         >
                           {copiedId === link.shortCode ? (
-                            <Check className="h-4 w-4 text-green-500" />
+                            <Check className="h-3 w-3 text-green-500" />
                           ) : (
-                            <Copy className="h-4 w-4" />
+                            <Copy className="h-3 w-3" />
                           )}
                         </Button>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <ExternalLink className="h-3 w-3" />
                         <a
                           href={link.url}
@@ -152,25 +170,32 @@ export function DashboardPage() {
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        Created {formatDate(link.createdAt)}
+                        {formatDate(link.createdAt)}
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1">
+                      <EditLinkDialog
+                        link={link}
+                        onSuccess={fetchLinks}
+                        trigger={
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-xs bg-transparent hover:bg-transparent"
+                          >
+                            <Edit className="h-3 w-3 mr-1 text-blue-400" />
+                            <span className="text-foreground">Edit</span>
+                          </Button>
+                        }
+                      />
                       <Button
                         size="sm"
-                        variant="outline"
-                        onClick={() => navigate(`/edit/${link.id}`)}
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
+                        variant="ghost"
                         onClick={() => handleDelete(link.id)}
+                        className="h-7 text-xs bg-transparent hover:bg-transparent"
                       >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
+                        <Trash2 className="h-3 w-3 mr-1 text-red-500" />
+                        <span className="text-foreground">Delete</span>
                       </Button>
                     </div>
                   </div>

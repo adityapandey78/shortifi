@@ -52,14 +52,7 @@ export function Header() {
           to="/" 
           className="flex items-center space-x-2 group"
         >
-          <motion.div
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.6 }}
-            className="relative"
-          >
-            <Link2 className="h-6 w-6 text-primary" />
-            <Sparkles className="h-3 w-3 text-primary absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </motion.div>
+          
           <span className="font-bold text-xl bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
             Shortifi
           </span>
@@ -71,13 +64,11 @@ export function Header() {
             <>
               <Link to="/dashboard">
                 <Button variant="ghost" className="gap-2">
-                  <Link2 className="h-4 w-4" />
                   My Links
                 </Button>
               </Link>
               <Link to="/profile">
                 <Button variant="ghost" className="gap-2">
-                  <User className="h-4 w-4" />
                   Profile
                 </Button>
               </Link>
@@ -86,7 +77,6 @@ export function Header() {
                 onClick={handleLogout}
                 className="gap-2"
               >
-                <LogOut className="h-4 w-4" />
                 Logout
               </Button>
             </>

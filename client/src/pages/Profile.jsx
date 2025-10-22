@@ -64,9 +64,10 @@ export function ProfilePage() {
         description: 'Verification email has been sent to your inbox',
       })
     } catch (error) {
+      console.error('Failed to resend verification:', error)
       toast({
         title: 'Error',
-        description: 'Failed to send verification email',
+        description: error.response?.data?.message || error.message || 'Failed to send verification email',
         variant: 'destructive',
       })
     }
