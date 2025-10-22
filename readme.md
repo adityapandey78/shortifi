@@ -109,6 +109,45 @@ Note: the server currently issues redirects and sets cookies. If you prefer a JS
 - server/app.js, server/routes/*, server/controllers/*, server/services/*
 - Drizzle schema and migrations: server/drizzle/
 - Emails: server/emails/
+
+## 🚀 Deployment
+
+### Deploy to Vercel
+
+This project is optimized for Vercel deployment. See **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)** for complete step-by-step instructions.
+
+**Quick deployment:**
+
+1. **Frontend (Client)**
+   ```bash
+   cd client
+   vercel --prod
+   ```
+
+2. **Backend (Server)**
+   ```bash
+   cd server
+   vercel --prod
+   ```
+
+3. **Configure Environment Variables**
+   - Add all required env vars in Vercel Dashboard
+   - See `.env.production.example` for full list
+
+**Required Environment Variables:**
+- `DATABASE_URL` - PostgreSQL connection string
+- `JWT_SECRET` - Strong random secret (min 32 chars)
+- `CLIENT_URL` - Your frontend Vercel URL
+- `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` - OAuth credentials
+- `SMTP_*` - Email configuration
+- See full list in `VERCEL_DEPLOYMENT.md`
+
+**Configuration Files:**
+- `client/vercel.json` - Frontend deployment config
+- `server/vercel.json` - Backend API deployment config
+
+For detailed instructions, troubleshooting, and best practices, see **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)**.
+
 ---
 
 This readme is generated with the help of AI (GPT-4) and human-edited for clarity.
