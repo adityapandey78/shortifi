@@ -5,18 +5,21 @@ import * as schema from "../drizzle/schema.js";
 import './dotenv.config.js';
 
 // Create PostgreSQL pool with proper SSL configuration for Supabase
+// Vercel serverless functions need optimized connection settings
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false // Required for Supabase and most cloud databases
-  },
-  // Connection pool settings for better reliability with Supabase
-  max: 10, // Maximum number of connections (Supabase pooler limit)
-  min: 2, // Keep at least 2 connections alive
-  idleTimeoutMillis: 30000, // Close idle connections after 30 seconds
-  connectionTimeoutMillis: 30000, // Wait 30 seconds before timing out (increased for Supabase)
-  query_timeout: 30000, // Query timeout 30 seconds
-  statement_timeout: 30000, // Statement timeout 30 seconds
+  ssl: process.env.NODE_ENV === 'production' 
+    ? { rejectUnauthorized: false } // Required for Supabase and most cloud databases
+    : false, // Local development without SSL
+  // Optimized connection pool settings for Vercel serverless
+  max: 1, // Vercel serverless: Use 1 connection per function instance
+  min: 0, // Don't keep idle connections
+  idleTimeoutMillis: 10000, // Close idle connections after 10 seconds (serverless optimization)
+  connectionTimeoutMillis: 10000, // Faster timeout for serverless (10s)
+  query_timeout: 15000, // Query timeout 15 seconds
+  statement_timeout: 15000, // Statement timeout 15 seconds
+  // Allow graceful exits
+  allowExitOnIdle: true, // Let the pool close when idle (good for serverless)
 });
 
 // Test connection
