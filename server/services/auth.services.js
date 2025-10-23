@@ -186,7 +186,14 @@ export const authenticateUser = async ({ req, res, user, name, email }) => {
   });
   const refreshToken = createRefreshToken({ sessionId: session.id });
 
-  const baseConfig = { httpOnly: true, secure: true };
+  // Cookie configuration for cross-origin (Vercel deployment)
+  const isProduction = process.env.NODE_ENV === 'production';
+  const baseConfig = { 
+    httpOnly: true, 
+    secure: true, // Always secure (HTTPS)
+    sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-origin in production
+    path: '/',
+  };
 
   res.cookie("access_token", accessToken, {
     ...baseConfig,

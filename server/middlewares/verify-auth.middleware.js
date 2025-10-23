@@ -42,8 +42,14 @@ export const verifyAuthentication = async (req, res, next) => {
         try {
             const { newAccessToken, newRefreshToken, user } = await refreshTokens(refreshToken);
 
-            // Cookie configuration (httpOnly for security; secure should be true in production)
-            const baseConfig = { httpOnly: true, secure: false };
+            // Cookie configuration for cross-origin (Vercel deployment)
+            const isProduction = process.env.NODE_ENV === 'production';
+            const baseConfig = { 
+                httpOnly: true, 
+                secure: true, // Always secure (HTTPS)
+                sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-origin in production
+                path: '/',
+            };
 
             // Set refreshed tokens in cookies with appropriate expiry
             res.cookie("access_token", newAccessToken, {
