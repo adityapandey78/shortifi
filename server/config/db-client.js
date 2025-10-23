@@ -4,38 +4,117 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "../drizzle/schema.js";
 import './dotenv.config.js';
 
-// Create PostgreSQL pool with proper SSL configuration for Supabase
-// Vercel serverless functions need optimized connection settings
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' 
-    ? { rejectUnauthorized: false } // Required for Supabase and most cloud databases
-    : false, // Local development without SSL
-  // Optimized connection pool settings for Vercel serverless
-  max: 1, // Vercel serverless: Use 1 connection per function instance
-  min: 0, // Don't keep idle connections
-  idleTimeoutMillis: 10000, // Close idle connections after 10 seconds (serverless optimization)
-  connectionTimeoutMillis: 10000, // Faster timeout for serverless (10s)
-  query_timeout: 15000, // Query timeout 15 seconds
-  statement_timeout: 15000, // Statement timeout 15 seconds
-  // Allow graceful exits
-  allowExitOnIdle: true, // Let the pool close when idle (good for serverless)
+// Determine if we're in a serverless environment (Vercel)
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Connection string selection based on environment
+let connectionString = process.env.DATABASE_URL;
+
+// For Vercel deployment, prefer the pooler URL if available
+if (isVercel && process.env.DATABASE_POOLER_URL) {
+  connectionString = process.env.DATABASE_POOLER_URL;
+  console.log('[DB] Using Supabase Connection Pooler for Vercel serverless');
+}
+
+// Validate connection string
+if (!connectionString) {
+  console.error('[DB] ERROR: DATABASE_URL is not set!');
+  throw new Error('DATABASE_URL environment variable is required');
+}
+
+// Create PostgreSQL pool with proper SSL configuration
+// Different settings for serverless (Vercel) vs traditional server (localhost)
+const poolConfig = {
+  connectionString,
+  ssl: isProduction ? { rejectUnauthorized: false } : false,
+  
+  // Serverless-optimized settings (Vercel)
+  ...(isVercel && {
+    max: 1, // Vercel: 1 connection per function instance
+    min: 0, // Don't maintain idle connections
+    idleTimeoutMillis: 10000, // Close after 10s idle
+    connectionTimeoutMillis: 10000, // 10s connection timeout
+    allowExitOnIdle: true, // Allow pool to close when idle
+  }),
+  
+  // Traditional server settings (localhost)
+  ...(!isVercel && {
+    max: 10, // Up to 10 concurrent connections
+    min: 2, // Keep 2 connections alive
+    idleTimeoutMillis: 30000, // 30s idle timeout
+    connectionTimeoutMillis: 5000, // 5s connection timeout
+  }),
+  
+  // Common settings
+  query_timeout: 15000, // 15s query timeout
+  statement_timeout: 15000, // 15s statement timeout
+};
+
+const pool = new Pool(poolConfig);
+
+// Handle unexpected errors
+pool.on('error', (err) => {
+  console.error('[DB] Unexpected database pool error:', err.message);
+  if (err.code === 'ECONNRESET') {
+    console.error('[DB] Connection was reset. This is common in serverless environments.');
+  }
 });
 
-// Test connection
-pool.on('error', (err) => {
-  console.error('Unexpected database error:', err);
+// Handle connection events
+pool.on('connect', () => {
+  if (!isVercel) {
+    console.log('[DB] New client connected to pool');
+  }
+});
+
+pool.on('remove', () => {
+  if (!isVercel) {
+    console.log('[DB] Client removed from pool');
+  }
 });
 
 export const db = drizzle(pool, { schema });
 
+// Export pool for graceful shutdown
+export { pool };
+
 // Test connection on startup (non-blocking)
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('[DB] Connection failed:', err.message);
-    console.error('[DB] Check your DATABASE_URL in .env file');
-    console.error('[DB] Ensure PostgreSQL/Supabase is accessible');
-  } else {
-    console.log('[DB] Database connected successfully at:', res.rows[0].now);
+// Only test in non-serverless environments or on first invocation
+const testConnection = async () => {
+  try {
+    const result = await pool.query('SELECT NOW(), version()');
+    console.log('[DB] ✅ Database connected successfully at:', result.rows[0].now);
+    console.log('[DB] PostgreSQL version:', result.rows[0].version.split(',')[0]);
+    
+    // Verify tables exist
+    const tables = await pool.query(`
+      SELECT tablename FROM pg_tables 
+      WHERE schemaname = 'public' 
+      ORDER BY tablename
+    `);
+    console.log('[DB] Tables found:', tables.rows.map(r => r.tablename).join(', '));
+  } catch (err) {
+    console.error('[DB] ❌ Connection failed:', err.message);
+    console.error('[DB] Code:', err.code);
+    
+    if (err.code === 'ENOTFOUND') {
+      console.error('[DB] SOLUTION: Use Supabase Connection Pooler URL for Vercel');
+      console.error('[DB] Format: postgresql://postgres.[REF]:[PWD]@aws-0-[REGION].pooler.supabase.com:6543/postgres');
+    } else if (err.code === 'ECONNREFUSED') {
+      console.error('[DB] SOLUTION: Check if PostgreSQL is running locally');
+      console.error('[DB] Or verify DATABASE_URL is correct');
+    } else if (err.code === '28P01') {
+      console.error('[DB] SOLUTION: Invalid username or password');
+    }
+    
+    // In development, exit on connection failure
+    // In production/serverless, continue (connection might work on next request)
+    if (!isProduction) {
+      throw err;
+    }
   }
-});
+};
+
+// Run connection test
+testConnection();
