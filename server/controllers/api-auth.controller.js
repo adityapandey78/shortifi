@@ -333,18 +333,15 @@ export const apiGoogleCallback = async (req, res) => {
         // Authenticate user (sets cookies)
         await authenticateUser({ req, res, user, name, email });
 
-        return res.json({
-            success: true,
-            message: "Google login successful",
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                isEmailValid: user.isEmailValid,
-            },
-        });
+        // Clear OAuth cookies
+        res.clearCookie("google_oauth_state");
+        res.clearCookie("google_code_verifier");
+
+        // Redirect to frontend home page after successful login
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/?login=success`);
     } catch (error) {
         console.error("API Google Callback error:", error);
-        return res.status(500).json({ success: false, message: "Google login failed" });
+        // Redirect to frontend login page with error
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/login?error=google_oauth_failed`);
     }
 };
