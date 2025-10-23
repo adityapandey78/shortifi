@@ -1,22 +1,30 @@
 # Vercel Deployment Checklist
 
+## ⚠️ CURRENT ISSUE: Database Connection Error
+
+**Status:** ENOTFOUND db.vokbvbdzvturbvmcuocz.supabase.co
+**Solution:** See `QUICK_FIX.md` or `VERCEL_ISSUES_RESOLVED.md`
+**Required:** Use Supabase Connection Pooler (port 6543) instead of direct connection (port 5432)
+
+---
+
 Use this checklist to ensure a smooth deployment.
 
 ## 📋 Pre-Deployment
 
 ### Code Preparation
-- [ ] All code committed to Git repository
-- [ ] Repository pushed to GitHub/GitLab/Bitbucket
-- [ ] `client/vercel.json` exists
-- [ ] `server/vercel.json` exists
-- [ ] `server/app.js` exports default app
-- [ ] No sensitive data in code (all in `.env`)
+- [x] All code committed to Git repository
+- [x] Repository pushed to GitHub/GitLab/Bitbucket
+- [x] `client/vercel.json` exists
+- [x] `server/vercel.json` exists
+- [x] `server/app.js` exports default app
+- [x] No sensitive data in code (all in `.env`)
 
 ### Database Setup
-- [ ] PostgreSQL database created (Supabase recommended)
-- [ ] Database URL copied
+- [x] PostgreSQL database created (Supabase)
+- [ ] **🔥 CRITICAL: Database POOLER URL copied (port 6543)**
+- [ ] **🔥 CRITICAL: Using connection pooler (port 6543 for Supabase)**
 - [ ] Database accessible from anywhere (0.0.0.0/0)
-- [ ] Using connection pooler (port 6543 for Supabase)
 
 ### Google OAuth (if using)
 - [ ] Google Cloud project created
