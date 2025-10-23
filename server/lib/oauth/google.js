@@ -8,12 +8,14 @@ if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
 
 // Determine the correct backend URL based on environment
 const isProduction = env.NODE_ENV === 'production';
-const backendURL = isProduction 
-    ? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://shortifi-sand.vercel.app')
-    : 'http://localhost:3000';
 
-// OAuth callback should be on the BACKEND, not frontend
-const callbackURL = `${backendURL}/api/auth/google/callback`;
+// Use BACKEND_URL from env if available, otherwise determine based on environment
+const backendURL = process.env.BACKEND_URL || (isProduction 
+    ? 'https://shortifi-sand.vercel.app'  // Your BACKEND production domain
+    : 'http://localhost:3000');
+
+// OAuth callback should be on the BACKEND
+const callbackURL = `${backendURL}/google/callback`;
 console.log(`[OAuth] Google callback URL: ${callbackURL}`);
 
 export const google = new Google(
