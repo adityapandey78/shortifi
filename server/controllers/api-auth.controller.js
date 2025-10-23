@@ -259,11 +259,12 @@ export const apiGoogleLogin = async (req, res) => {
         ]);
 
         // Store state and verifier in cookies
+        // For cross-origin OAuth, we need sameSite: "none" and secure: true
         const cookieConfig = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: true, // Always true for cross-origin cookies
             maxAge: OAUTH_EXCHANGE_EXPIRY,
-            sameSite: "lax",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" for production cross-origin
         };
 
         res.cookie("google_oauth_state", state, cookieConfig);
