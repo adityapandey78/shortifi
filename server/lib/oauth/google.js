@@ -14,8 +14,8 @@ const backendURL = process.env.BACKEND_URL || (isProduction
     ? 'https://shortifi-sand.vercel.app'  // Your BACKEND production domain
     : 'http://localhost:3000');
 
-// OAuth callback should be on the BACKEND
-const callbackURL = `${backendURL}/google/callback`;
+// OAuth callback should be on the BACKEND API route
+const callbackURL = `${backendURL}/api/auth/google/callback`;
 console.log(`[OAuth] Google callback URL: ${callbackURL}`);
 
 export const google = new Google(
