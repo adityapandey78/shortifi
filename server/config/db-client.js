@@ -5,17 +5,21 @@ import * as schema from "../drizzle/schema.js";
 import './dotenv.config.js';
 
 // Determine if we're in a serverless environment (Vercel)
-const isVercel = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL === 'true' || process.env.VERCEL_ENV;
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Connection string selection based on environment
-let connectionString = process.env.DATABASE_URL;
+// PRIORITY: Use DATABASE_POOLER_URL if available (for Vercel/serverless)
+let connectionString = process.env.DATABASE_POOLER_URL || process.env.DATABASE_URL;
 
-// For Vercel deployment, prefer the pooler URL if available
-if (isVercel && process.env.DATABASE_POOLER_URL) {
-  connectionString = process.env.DATABASE_POOLER_URL;
-  console.log('[DB] Using Supabase Connection Pooler for Vercel serverless');
+// Log which connection we're using
+if (process.env.DATABASE_POOLER_URL) {
+  console.log('[DB] Using DATABASE_POOLER_URL (Connection Pooler for serverless)');
+} else {
+  console.log('[DB] Using DATABASE_URL (Direct connection)');
 }
+
+console.log('[DB] Environment: isVercel =', isVercel, ', isProduction =', isProduction);
 
 // Validate connection string
 if (!connectionString) {
