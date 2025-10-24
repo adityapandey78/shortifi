@@ -1,135 +1,101 @@
 # Shortifi Client
 
-Modern React frontend for Shortifi URL Shortener.
-
-## Features
-
-- 🎨 Modern, clean UI with dark/light mode
-- ⚡ Built with React + Vite for lightning-fast development
-- 🎭 Shadcn UI components for consistency
-- 🌊 Framer Motion animations
-- 📱 Fully responsive design
-- 🔐 Google OAuth integration
-- 🎯 Form validation with React Hook Form
-- 🚀 Axios for API calls
-- 💾 Zustand for state management
+Modern React frontend for the Shortifi URL Shortener.
 
 ## Tech Stack
 
-- **Framework**: React 18
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **UI Components**: Shadcn UI, Radix UI
-- **Animations**: Framer Motion
-- **Forms**: React Hook Form
-- **HTTP Client**: Axios
-- **State Management**: Zustand
-- **Routing**: React Router v6
-- **Icons**: Lucide React
+- React 18 + Vite
+- Zustand (state management)
+- TailwindCSS + shadcn/ui
+- React Hook Form + Zod
+- Framer Motion
+- Axios
 
-## Getting Started
+## Quick Start
 
-### Prerequisites
-
-- Node.js 18+ and npm/yarn
-- Backend server running on `http://localhost:3000`
-
-### Installation
-
-1. Install dependencies:
 ```bash
 npm install
-```
-
-2. Start the development server:
-```bash
+cp .env.example .env
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`
+Visit `http://localhost:5173`
 
-### Build for Production
+## Environment Variables
 
-```bash
-npm run build
-```
-
-### Preview Production Build
-
-```bash
-npm run preview
+```env
+VITE_API_URL=              # Backend URL (empty = proxy)
+VITE_PORT=5173            # Dev server port
 ```
 
 ## Project Structure
 
 ```
 src/
-├── components/          # Reusable components
-│   ├── ui/             # Shadcn UI components
-│   ├── Header.jsx      # Navigation header
-│   └── ThemeToggle.jsx # Dark/light mode toggle
-├── pages/              # Page components
-│   ├── Home.jsx        # Landing + URL shortener
-│   ├── Login.jsx       # Login page
-│   ├── Register.jsx    # Registration page
-│   ├── Dashboard.jsx   # User's links dashboard
-│   └── Profile.jsx     # User profile
-├── services/           # API service layer
-│   ├── auth.service.js     # Authentication APIs
-│   └── shortener.service.js # URL shortener APIs
-├── store/              # Global state management
+├── components/          # UI components
+│   ├── ui/             # shadcn/ui components
+│   ├── Header.jsx      # Navigation
+│   └── ThemeToggle.jsx # Dark/light mode
+├── pages/              # Pages
+│   ├── Home.jsx        # Homepage
+│   ├── Login.jsx       # Login
+│   ├── Register.jsx    # Register
+│   ├── Dashboard.jsx   # Dashboard
+│   └── Profile.jsx     # Profile
+├── services/           # API calls
+│   ├── auth.service.js
+│   └── shortener.service.js
+├── store/              # State
 │   └── useStore.js     # Zustand store
-├── lib/                # Utilities
-│   ├── api.js          # Axios instance
-│   └── utils.js        # Helper functions
-├── hooks/              # Custom React hooks
-│   └── use-toast.js    # Toast notifications hook
-├── App.jsx             # Main app component
-├── main.jsx            # Entry point
-└── index.css           # Global styles
+├── lib/                # Utils
+│   ├── api.js          # Axios config
+│   └── utils.js
+└── hooks/
+    └── use-toast.js
 ```
 
-## Features Implementation
+## Features
 
-### Authentication
-- Email/password login and registration
-- Google OAuth integration
-- Session management with cookies
-- Protected routes
+- Email/password authentication
+- Google OAuth
+- Create short links (with custom codes)
+- Manage links (edit, delete, copy)
+- Dark/light theme
+- Responsive design
 
-### URL Shortener
-- Create short links with optional custom codes
-- Copy short links to clipboard
-- View all user's links
-- Edit and delete links
-- Real-time validation
+## Development
 
-### UI/UX
-- Dark/light theme toggle
-- Smooth animations and transitions
-- Responsive design (mobile-first)
-- Toast notifications
-- Loading states
-- Form validation with error messages
+**Run dev server:**
+```bash
+npm run dev
+```
+
+**Build:**
+```bash
+npm run build
+```
+
+**Preview:**
+```bash
+npm run preview
+```
 
 ## API Integration
 
-The frontend connects to the backend through Vite's proxy configuration:
-- API calls go to `/api/*`
-- Proxied to `http://localhost:3000`
-- Cookies are automatically sent with requests
+Vite proxy forwards `/api/*` to `http://localhost:3000`
 
-## Environment Variables
+Axios configured with:
+- `baseURL: ''` (uses proxy)
+- `withCredentials: true` (sends cookies)
 
-No environment variables needed - all configuration is in `vite.config.js`
+## Deploy
 
-## Contributing
+```bash
+vercel --prod
+```
 
-1. Follow the existing code style
-2. Add comments for complex logic
-3. Test on both dark and light themes
-4. Ensure responsive design works on all screen sizes
+Set `VITE_API_URL` to your backend URL in Vercel.
 
 ## License
 
-ISC
+MIT

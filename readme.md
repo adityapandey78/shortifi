@@ -1,153 +1,190 @@
-# Shortifi — URL Shortener (Backend-focused)
+# Shortifi — URL Shortener
 
-This repository contains the backend implementation for Shortifi, a secure, production-minded URL shortener service built with Node.js, Express and PostgreSQL (Drizzle ORM). The README focuses on the backend architecture, security choices, data model, developer setup and implementing React-based frontend (React, Redux, Zod, react-hook-form and axios).
+A secure, production-ready URL shortener service built with Node.js, Express, PostgreSQL and React.
 
+## Tech Stack
 
-## Highlights
+**Backend:**
+- Node.js + Express
+- PostgreSQL + Drizzle ORM
+- JWT authentication with refresh tokens
+- Google OAuth (PKCE)
+- Email verification (MJML + Nodemailer)
 
-- Backend: Node.js (ES modules), Express, EJS views (server-rendered), modular controllers and services
-- DB: PostgreSQL accessed via `pg` and Drizzle ORM; migrations managed with `drizzle-kit`
-- Auth: argon2 password hashing, JWT access & refresh tokens, server-side session records and token rotation
-- Email: MJML templates rendered with EJS, converted to HTML and sent via nodemailer
-- OAuth: Google using PKCE
-- Frontend: React SPA (Redux, Zod, react-hook-form, axios) — production-ready client integrated with backend auth
+**Frontend:**
+- React + React Router
+- Zustand (state management)
+- TailwindCSS + shadcn/ui
+- React Hook Form + Zod
+- Framer Motion
 
-## Architecture and code layout (short)
+## Quick Start
 
-- server/app.js — app bootstrap, middleware and route registration
-- server/routes/* — express route modules (`auth.routes.js`, `shortner.routes.js`)
-- server/controllers/* — request handling, validation and orchestration
-- server/services/* — business logic and DB access (auth, short links, email)
-- server/drizzle/schema.js — Drizzle table definitions and relations
-- server/emails/*.mjml — MJML templates used for verification emails
+### 1. Install Dependencies
 
-## Data model (concise)
-
-Main tables (see `server/drizzle/schema.js`):
-
-- users: id, name, email, password, is_email_valid, created_at, updated_at
-- verify_email_tokens: user_id, token, expires_at
-- short_links: id, shortCode, url, user_id, created_at, updated_at
-- oauth_accounts: provider, provider_account_id, user_id
-- sessions: user_id, valid, user_agent, ip, created_at
-
-Naming: DB columns use snake_case; application code uses camelCase.
-
-## Authentication & token flow (detailed)
-
-1. User authenticates (local or OAuth). The server creates a DB session row in `sessions` and issues two httpOnly cookies: `access_token` and `refresh_token`.
-
-2. `access_token` (short lived, default 15 minutes) contains user claims and session id.
-
-3. On each request the `verify-auth.middleware.js` attempts to verify the access token:
-	- If valid: request proceeds with `req.user` set.
-	- If expired and `refresh_token` is present: middleware calls `refreshTokens()` which validates the refresh JWT, ensures session is still valid in DB, and issues rotated tokens (new access & refresh), updating cookies.
-
-4. Logout clears the session row and clears auth cookies.
-
-Design reasons: combining JWTs with server-side sessions provides the performance benefits of JWTs and the safety of server-side revocation and session auditing.
-
-## Email verification and OAuth
-
-- Email: verification codes are numeric tokens stored in `verify_email_tokens` with expiry; messages rendered from MJML templates using EJS and sent via nodemailer.
-- OAuth: Google PKCE implemented; new OAuth users are created with `isEmailValid=true` and an associated `oauth_accounts` row.
-
-## Frontend integration
-
-- SPA stack: React + Redux Toolkit, react-hook-form + Zod resolver for all user forms, axios configured with `withCredentials: true`.
-- Auth handling: client does not read tokens directly; it relies on browser-sent cookies. axios is configured to send credentials and handle 401 flows by retrying after the server refresh (server-side middleware refreshes tokens when cookies are present).
-
-## Key developer tasks & commands
-
-1) Install dependencies
-
-```powershell
+```bash
+# Server
 cd server
+npm install
+
+# Client
+cd client
 npm install
 ```
 
-2) Environment (create `server/.env`)
+### 2. Configure Environment
 
-Minimum recommended values:
+Copy `.env.example` to `.env` and update values:
 
-- DATABASE_URL (Postgres)
-- JWT_SECRET (strong random secret)
-- FRONTEND_URL (used when generating verify links)
-- GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET (if using Google OAuth)
+```bash
+# Server
+cd server
+cp .env.example .env
 
-3) Run
+# Client
+cd client
+cp .env.example .env
+```
 
-```powershell
+### 3. Setup Database
+
+```bash
+cd server
+npm run db:generate  # Generate migrations
+npm run db:migrate   # Run migrations
+```
+
+### 4. Run Development
+
+```bash
+# Terminal 1 - Server
+cd server
+npm run dev
+
+# Terminal 2 - Client
+cd client
 npm run dev
 ```
 
-4) Drizzle helpers
+## Project Structure
 
-- `npm run db:generate` — generate migration from schema
-- `npm run db:migrate` — apply pending migrations
-- `npm run db:studio` — open Drizzle studio
+```
+server/
+  ├── app.js              # Express app
+  ├── config/             # Configuration
+  ├── controllers/        # Request handlers
+  ├── services/           # Business logic
+  ├── routes/             # API routes
+  ├── drizzle/schema.js   # Database schema
+  └── lib/                # Utilities
 
-## Important endpoints (concise)
+client/
+  ├── src/
+  │   ├── pages/          # React pages
+  │   ├── components/     # UI components
+  │   ├── services/       # API calls
+  │   ├── store/          # Zustand store
+  │   └── lib/            # Utilities
+  └── public/
+```
 
-- GET /                — homepage with create form and list of links
-- POST /               — create short link (body: { url, shortCode? })
-- GET /:shortcode      — redirect to original URL
-- Auth: /register, /login, /logout, /verify-email, /verify-email-token, /resend-verification-link
-- OAuth: /google, /google/callback
+## Authentication Flow
 
-Note: the server currently issues redirects and sets cookies. If you prefer a JSON-first API for the SPA, the routes can be duplicated under `/api` to return JSON responses.
+1. User registers/logs in
+2. Server creates session in DB and issues JWT cookies
+3. Access token (15min) + Refresh token (7d)
+4. Middleware auto-refreshes expired access tokens
+5. Logout clears session and cookies
 
-## Security & production notes
+## API Endpoints
 
-- Use HTTPS and set cookie `secure: true` in production
-- Store secrets (DB, JWT, email provider keys) in a secrets manager
-- Add rate limiting (auth, redirect endpoints) and consider bot-detection on redirect creation
-- Optional: move session store to Redis for cross-instance session revocation
+**Public:**
+- `GET /:shortcode` - Redirect to original URL
 
-## Where to inspect code
+**Auth:**
+- `POST /api/auth/register` - Register user
+- `POST /api/auth/login` - Login user
+- `POST /api/auth/logout` - Logout user
+- `GET /api/auth/me` - Get current user
+- `GET /api/auth/google` - Google OAuth
+- `GET /api/auth/google/callback` - OAuth callback
 
-- server/app.js, server/routes/*, server/controllers/*, server/services/*
-- Drizzle schema and migrations: server/drizzle/
-- Emails: server/emails/
+**Links:**
+- `GET /api/shortner` - Get user's links
+- `POST /api/shortner` - Create short link
+- `PUT /api/shortner/:id` - Update link
+- `DELETE /api/shortner/:id` - Delete link
 
-## 🚀 Deployment
+## Database Schema
 
-### Deploy to Vercel
+**Tables:**
+- `users` - User accounts
+- `sessions` - Active sessions
+- `short_links` - Shortened URLs
+- `oauth_accounts` - OAuth providers
+- `verify_email_tokens` - Email verification
 
-This project is optimized for Vercel deployment. See **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)** for complete step-by-step instructions.
+## Deployment
 
-**Quick deployment:**
+### Vercel
 
-1. **Frontend (Client)**
-   ```bash
-   cd client
-   vercel --prod
-   ```
+**Server:**
+```bash
+cd server
+vercel --prod
+```
 
-2. **Backend (Server)**
-   ```bash
-   cd server
-   vercel --prod
-   ```
+**Client:**
+```bash
+cd client
+vercel --prod
+```
 
-3. **Configure Environment Variables**
-   - Add all required env vars in Vercel Dashboard
-   - See `.env.production.example` for full list
+**Environment Variables:**
 
-**Required Environment Variables:**
-- `DATABASE_URL` - PostgreSQL connection string
-- `JWT_SECRET` - Strong random secret (min 32 chars)
-- `CLIENT_URL` - Your frontend Vercel URL
-- `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` - OAuth credentials
-- `SMTP_*` - Email configuration
-- See full list in `VERCEL_DEPLOYMENT.md`
+Set in Vercel Dashboard → Settings → Environment Variables:
 
-**Configuration Files:**
-- `client/vercel.json` - Frontend deployment config
-- `server/vercel.json` - Backend API deployment config
+```env
+DATABASE_URL=postgresql://...
+JWT_SECRET=...
+FRONTEND_URL=https://your-frontend.vercel.app
+BACKEND_URL=https://your-backend.vercel.app
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+SMTP_HOST=smtp.gmail.com
+SMTP_USER=...
+SMTP_PASS=...
+```
 
-For detailed instructions, troubleshooting, and best practices, see **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)**.
+**Google OAuth Setup:**
 
----
+Add redirect URI in [Google Cloud Console](https://console.cloud.google.com/apis/credentials):
+```
+https://your-backend.vercel.app/api/auth/google/callback
+```
 
-This readme is generated with the help of AI (GPT-4) and human-edited for clarity.
+## Migration from MySQL
+
+This project was migrated from MySQL to PostgreSQL. See [MIGRATION.md](./MIGRATION.md) for details.
+
+## Development
+
+**Drizzle Studio:**
+```bash
+cd server
+npm run db:studio
+```
+
+**Generate Migration:**
+```bash
+npm run db:generate
+```
+
+**Apply Migration:**
+```bash
+npm run db:migrate
+```
+
+## License
+
+MIT
