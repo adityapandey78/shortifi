@@ -247,12 +247,12 @@ export const insertVerifyEmailToken = async ({ userId, token }) => {
 
 /* Create a verification link using the URL API */
 export const createVerifyEmailLink = async ({ email, token }) => {
-  const url = new URL(`${process.env.FRONTEND_URL}/verify-email-token`);
+  const url = new URL(`${process.env.FRONTEND_URL}/verify-email`);
   url.searchParams.append("token", token);
   url.searchParams.append("email", email);
 
   const generatedLink = url.toString();
-  console.log("The genrated link: ", generatedLink);
+  console.log("Generated verification link: ", generatedLink);
   return generatedLink;
 };
 

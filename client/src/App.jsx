@@ -6,6 +6,7 @@ import { LoginPage } from '@/pages/Login'
 import { RegisterPage } from '@/pages/Register'
 import { DashboardPage } from '@/pages/Dashboard'
 import { ProfilePage } from '@/pages/Profile'
+import { VerifyEmailPage } from '@/pages/VerifyEmail'
 import { useStore } from '@/store/useStore'
 import { getCurrentUser } from '@/services/auth.service'
 import { useEffect } from 'react'
@@ -59,6 +60,7 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
           </Routes>
         </main>
         <Toaster />
