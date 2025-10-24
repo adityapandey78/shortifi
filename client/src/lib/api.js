@@ -55,12 +55,17 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      const { status, data } = error.response
+      const { status, data, config } = error.response
       
-      // Handle 401 Unauthorized - user needs to login
+      // Handle 401 Unauthorized
+      // Don't redirect to login if this is the /api/auth/me endpoint
+      // (checking authentication status should not force a redirect)
       if (status === 401) {
-        console.warn('[API] Unauthorized - redirecting to login')
-        window.location.href = '/login'
+        const isAuthCheck = config?.url?.includes('/api/auth/me')
+        if (!isAuthCheck) {
+          console.warn('[API] Unauthorized - redirecting to login')
+          window.location.href = '/login'
+        }
         return Promise.reject(new Error('Unauthorized'))
       }
       
