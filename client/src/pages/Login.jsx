@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
-import { login, googleLogin } from '@/services/auth.service'
+import { login, googleLogin, getCurrentUser } from '@/services/auth.service'
 import { useStore } from '@/store/useStore'
+import { VerifyEmailPrompt } from '@/components/VerifyEmailPrompt'
 
 /**
  * Login Page Component
@@ -18,21 +19,42 @@ import { useStore } from '@/store/useStore'
 export function LoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const [isLoading, setIsLoading] = useState(false)
+  const [showVerifyPrompt, setShowVerifyPrompt] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
   const navigate = useNavigate()
   const { toast } = useToast()
-  const { setUser } = useStore()
+  const { setUser, setAuthenticated } = useStore()
 
   // Handle email/password login
   const onSubmit = async (data) => {
     setIsLoading(true)
     try {
       await login(data)
-      setUser({ email: data.email })
-      toast({
-        title: 'Welcome back!',
-        description: 'You have successfully logged in.',
-      })
-      navigate('/')
+      
+      // Get user info to check email verification status
+      const userResponse = await getCurrentUser()
+      if (userResponse.success && userResponse.user) {
+        setUser(userResponse.user)
+        setAuthenticated(true)
+        
+        // Check if email is verified
+        if (!userResponse.user.isEmailValid) {
+          setUserEmail(userResponse.user.email)
+          setShowVerifyPrompt(true)
+        } else {
+          toast({
+            title: 'Welcome back!',
+            description: 'You have successfully logged in.',
+          })
+          navigate('/')
+        }
+      } else {
+        toast({
+          title: 'Welcome back!',
+          description: 'You have successfully logged in.',
+        })
+        navigate('/')
+      }
     } catch (error) {
       toast({
         title: 'Login failed',
@@ -47,6 +69,11 @@ export function LoginPage() {
   // Handle Google OAuth login
   const handleGoogleLogin = () => {
     googleLogin()
+  }
+
+  const handleCloseVerifyPrompt = () => {
+    setShowVerifyPrompt(false)
+    navigate('/')
   }
 
   return (
@@ -245,6 +272,11 @@ export function LoginPage() {
           </Card>
         </motion.div>
       </div>
+
+      {/* Email Verification Prompt */}
+      {showVerifyPrompt && (
+        <VerifyEmailPrompt email={userEmail} onClose={handleCloseVerifyPrompt} />
+      )}
     </div>
   )
 }

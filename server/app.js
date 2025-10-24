@@ -25,12 +25,22 @@ app.use(verifyAuthentication);
 
 // CORS middleware for API routes (allow React frontend)
 app.use("/api", (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", env.FRONTEND_URL || "http://localhost:5173");
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    env.FRONTEND_URL || "http://localhost:5173",
+    "http://localhost:5173",
+    "https://shortifii.vercel.app",
+    "https://shortifi.vercel.app"
+  ];
+  
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+  
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   
-  // Handle preflight requests
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
