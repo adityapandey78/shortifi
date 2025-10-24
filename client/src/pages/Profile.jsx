@@ -82,16 +82,16 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="container py-8 max-w-4xl">
+    <div className="container px-4 sm:px-6 py-4 sm:py-8 max-w-4xl">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
+        className="space-y-4 sm:space-y-6"
       >
         {/* Header */}
         <div>
-          <h1 className="text-4xl font-bold">Profile</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Profile</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
             Manage your account settings and preferences
           </p>
         </div>
@@ -99,28 +99,28 @@ export function ProfilePage() {
         {/* Profile Card */}
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
-                <User className="h-8 w-8 text-white" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center flex-shrink-0">
+                <User className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
-              <div>
-                <CardTitle className="text-2xl">{profile?.name}</CardTitle>
-                <CardDescription>{profile?.email}</CardDescription>
+              <div className="min-w-0">
+                <CardTitle className="text-lg sm:text-xl md:text-2xl truncate">{profile?.name}</CardTitle>
+                <CardDescription className="text-xs sm:text-sm truncate">{profile?.email}</CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 sm:space-y-6">
             {/* Email Verification Status */}
-            <div className="flex items-center justify-between p-4 rounded-lg border">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-lg border">
+              <div className="flex items-center gap-2 sm:gap-3">
                 {profile?.isEmailValid ? (
-                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
                 ) : (
-                  <XCircle className="h-5 w-5 text-orange-500" />
+                  <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500 flex-shrink-0" />
                 )}
                 <div>
-                  <p className="font-medium">Email Verification</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm sm:text-base font-medium">Email Verification</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     {profile?.isEmailValid
                       ? 'Your email is verified'
                       : 'Your email is not verified'}
@@ -128,46 +128,46 @@ export function ProfilePage() {
                 </div>
               </div>
               {!profile?.isEmailValid && (
-                <Button onClick={handleResendVerification} size="sm">
+                <Button onClick={handleResendVerification} size="sm" className="w-full sm:w-auto h-8 text-xs sm:text-sm">
                   Resend Email
                 </Button>
               )}
             </div>
 
             {/* Account Info */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-lg border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                  <Mail className="h-4 w-4" />
-                  <span className="text-sm">Email</span>
+            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="p-3 sm:p-4 rounded-lg border">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1 sm:mb-2">
+                  <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <span className="text-xs sm:text-sm">Email</span>
                 </div>
-                <p className="font-medium">{profile?.email}</p>
+                <p className="text-sm sm:text-base font-medium truncate">{profile?.email}</p>
               </div>
 
-              <div className="p-4 rounded-lg border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                  <Calendar className="h-4 w-4" />
-                  <span className="text-sm">Member Since</span>
+              <div className="p-3 sm:p-4 rounded-lg border">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1 sm:mb-2">
+                  <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <span className="text-xs sm:text-sm">Member Since</span>
                 </div>
-                <p className="font-medium">
+                <p className="text-sm sm:text-base font-medium">
                   {formatDate(profile?.createdAt)}
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                  <Shield className="h-4 w-4" />
-                  <span className="text-sm">Account Type</span>
+              <div className="p-3 sm:p-4 rounded-lg border">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1 sm:mb-2">
+                  <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <span className="text-xs sm:text-sm">Account Type</span>
                 </div>
-                <p className="font-medium">Free</p>
+                <p className="text-sm sm:text-base font-medium">Free</p>
               </div>
 
-              <div className="p-4 rounded-lg border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                  <User className="h-4 w-4" />
-                  <span className="text-sm">Total Links</span>
+              <div className="p-3 sm:p-4 rounded-lg border">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1 sm:mb-2">
+                  <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <span className="text-xs sm:text-sm">Total Links</span>
                 </div>
-                <p className="font-medium">{profile?.linksCount || 0}</p>
+                <p className="text-sm sm:text-base font-medium">{profile?.linksCount || 0}</p>
               </div>
             </div>
           </CardContent>
@@ -176,11 +176,11 @@ export function ProfilePage() {
         {/* Actions */}
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Manage your account and links</CardDescription>
+            <CardTitle className="text-lg sm:text-xl">Quick Actions</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Manage your account and links</CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-wrap gap-4">
-            <Button onClick={() => navigate('/dashboard')}>
+          <CardContent className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4">
+            <Button onClick={() => navigate('/dashboard')} size="default" className="w-full sm:w-auto h-9 sm:h-10 text-sm">
               View My Links
             </Button>
             <Button onClick={() => navigate('/')} variant="outline">

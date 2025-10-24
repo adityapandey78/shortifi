@@ -93,13 +93,13 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="container py-8 space-y-8">
+    <div className="container px-4 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-4xl font-bold">My Links</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">My Links</h1>
+        <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
           Manage all your shortened URLs in one place
         </p>
       </motion.div>
@@ -110,25 +110,25 @@ export function DashboardPage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="text-center py-12">
-            <CardContent className="space-y-4">
-              <div className="mx-auto w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-                <Link className="h-10 w-10 text-primary" />
+          <Card className="text-center py-8 sm:py-12">
+            <CardContent className="space-y-3 sm:space-y-4">
+              <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                <Link className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
               </div>
               <div>
-                <h3 className="text-2xl font-semibold">No links yet</h3>
-                <p className="text-muted-foreground mt-2">
+                <h3 className="text-xl sm:text-2xl font-semibold">No links yet</h3>
+                <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
                   Start creating short links from the home page
                 </p>
               </div>
-              <Button onClick={() => navigate('/')}>
+              <Button onClick={() => navigate('/')} size="default" className="h-9 sm:h-10 text-sm sm:text-base">
                 Create Your First Link
               </Button>
             </CardContent>
           </Card>
         </motion.div>
       ) : (
-        <div className="grid gap-2">
+        <div className="grid gap-2 sm:gap-3">
           {links.map((link, index) => (
             <motion.div
               key={link.id}
@@ -137,43 +137,43 @@ export function DashboardPage() {
               transition={{ delay: index * 0.05 }}
             >
               <Card className="hover:shadow-md transition-all">
-                <CardContent className="p-3">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <code className="px-2 py-0.5 bg-primary/10 text-primary rounded font-mono text-xs">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <code className="px-2 py-1 bg-primary/10 text-primary rounded font-mono text-xs break-all">
                           {window.location.origin}/{link.shortCode}
                         </code>
                         <Button
                           size="icon"
                           variant="ghost"
                           onClick={() => handleCopy(link.shortCode)}
-                          className="h-7 w-7"
+                          className="h-7 w-7 flex-shrink-0"
                         >
                           {copiedId === link.shortCode ? (
-                            <Check className="h-3 w-3 text-green-500" />
+                            <Check className="h-3.5 w-3.5 text-green-500" />
                           ) : (
-                            <Copy className="h-3 w-3" />
+                            <Copy className="h-3.5 w-3.5" />
                           )}
                         </Button>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <ExternalLink className="h-3 w-3" />
+                      <div className="flex items-start gap-2 text-xs text-muted-foreground">
+                        <ExternalLink className="h-3 w-3 mt-0.5 flex-shrink-0" />
                         <a
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="hover:underline truncate max-w-md"
+                          className="hover:underline break-all"
                         >
                           {link.url}
                         </a>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Calendar className="h-3 w-3" />
+                        <Calendar className="h-3 w-3 flex-shrink-0" />
                         {formatDate(link.createdAt)}
                       </div>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2 pt-2 border-t">
                       <EditLinkDialog
                         link={link}
                         onSuccess={fetchLinks}
@@ -181,9 +181,9 @@ export function DashboardPage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="h-7 text-xs bg-transparent hover:bg-transparent"
+                            className="h-8 text-xs bg-transparent hover:bg-transparent flex-1 sm:flex-none"
                           >
-                            <Edit className="h-3 w-3 mr-1 text-blue-400" />
+                            <Edit className="h-3.5 w-3.5 mr-1.5 text-blue-400" />
                             <span className="text-foreground">Edit</span>
                           </Button>
                         }
@@ -192,9 +192,9 @@ export function DashboardPage() {
                         size="sm"
                         variant="ghost"
                         onClick={() => handleDelete(link.id)}
-                        className="h-7 text-xs bg-transparent hover:bg-transparent"
+                        className="h-8 text-xs bg-transparent hover:bg-transparent flex-1 sm:flex-none"
                       >
-                        <Trash2 className="h-3 w-3 mr-1 text-red-500" />
+                        <Trash2 className="h-3.5 w-3.5 mr-1.5 text-red-500" />
                         <span className="text-foreground">Delete</span>
                       </Button>
                     </div>

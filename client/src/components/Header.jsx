@@ -46,36 +46,37 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container px-4 sm:px-6 flex h-14 sm:h-16 items-center justify-between">
         {/* Logo */}
         <Link 
           to="/" 
           className="flex items-center space-x-2 group"
         >
           
-          <span className="font-bold text-xl bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
+          <span className="font-bold text-lg sm:text-xl bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
             Shortifi
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-4">
+        <nav className="hidden md:flex items-center space-x-2 lg:space-x-4">
           {isAuthenticated ? (
             <>
               <Link to="/dashboard">
-                <Button variant="ghost" className="gap-2">
+                <Button variant="ghost" size="sm" className="gap-1 lg:gap-2 text-sm">
                   My Links
                 </Button>
               </Link>
               <Link to="/profile">
-                <Button variant="ghost" className="gap-2">
+                <Button variant="ghost" size="sm" className="gap-1 lg:gap-2 text-sm">
                   Profile
                 </Button>
               </Link>
               <Button 
                 variant="ghost" 
+                size="sm"
                 onClick={handleLogout}
-                className="gap-2"
+                className="gap-1 lg:gap-2 text-sm"
               >
                 Logout
               </Button>
@@ -83,10 +84,10 @@ export function Header() {
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost">Login</Button>
+                <Button variant="ghost" size="sm" className="text-sm">Login</Button>
               </Link>
               <Link to="/register">
-                <Button>Get Started</Button>
+                <Button size="sm" className="text-sm">Get Started</Button>
               </Link>
             </>
           )}
@@ -119,28 +120,29 @@ export function Header() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden border-t"
           >
-            <nav className="container py-4 flex flex-col space-y-2">
+            <nav className="container px-4 py-3 flex flex-col space-y-2">
               {isAuthenticated ? (
                 <>
                   <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start gap-2">
+                    <Button variant="ghost" size="sm" className="w-full justify-start gap-2 h-10">
                       <Link2 className="h-4 w-4" />
                       My Links
                     </Button>
                   </Link>
                   <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start gap-2">
+                    <Button variant="ghost" size="sm" className="w-full justify-start gap-2 h-10">
                       <User className="h-4 w-4" />
                       Profile
                     </Button>
                   </Link>
                   <Button 
                     variant="ghost" 
+                    size="sm"
                     onClick={() => {
                       handleLogout()
                       setMobileMenuOpen(false)
                     }}
-                    className="w-full justify-start gap-2"
+                    className="w-full justify-start gap-2 h-10"
                   >
                     <LogOut className="h-4 w-4" />
                     Logout
@@ -149,10 +151,10 @@ export function Header() {
               ) : (
                 <>
                   <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full">Login</Button>
+                    <Button variant="ghost" size="sm" className="w-full h-10">Login</Button>
                   </Link>
                   <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                    <Button className="w-full">Get Started</Button>
+                    <Button size="sm" className="w-full h-10">Get Started</Button>
                   </Link>
                 </>
               )}

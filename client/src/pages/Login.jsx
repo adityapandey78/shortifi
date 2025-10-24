@@ -77,7 +77,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 dark:from-gray-950 dark:via-purple-950 dark:to-gray-900">
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 relative overflow-hidden bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 dark:from-gray-950 dark:via-purple-950 dark:to-gray-900">
       {/* Grid pattern background */}
       <div className="absolute inset-0 -z-10 opacity-20">
         <div className="absolute inset-0" style={{
@@ -100,7 +100,7 @@ export function LoginPage() {
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="absolute -top-40 -left-40 w-96 h-96 bg-purple-400/30 rounded-full blur-3xl"
+          className="absolute -top-40 -left-40 w-64 h-64 sm:w-96 sm:h-96 bg-purple-400/30 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -113,11 +113,11 @@ export function LoginPage() {
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="absolute -bottom-40 -right-40 w-96 h-96 bg-pink-400/30 rounded-full blur-3xl"
+          className="absolute -bottom-40 -right-40 w-64 h-64 sm:w-96 sm:h-96 bg-pink-400/30 rounded-full blur-3xl"
         />
       </div>
 
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
         {/* Left side - Catchy sarcastic text */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -152,14 +152,14 @@ export function LoginPage() {
           className="w-full"
         >
           <Card className="backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-2 shadow-2xl">
-            <CardHeader className="space-y-3 text-center pb-6">
-              <CardTitle className="text-3xl font-bold">Log in to your account</CardTitle>
-              <CardDescription className="text-base">
+            <CardHeader className="space-y-2 sm:space-y-3 text-center pb-4 sm:pb-6">
+              <CardTitle className="text-2xl sm:text-3xl font-bold">Log in to your account</CardTitle>
+              <CardDescription className="text-sm sm:text-base">
                 Please enter your details to proceed.
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 sm:space-y-6">
               {/* Email/Password Form */}
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 <div className="space-y-2">
@@ -238,10 +238,10 @@ export function LoginPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-12 text-base font-semibold border-2 hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="w-full h-10 sm:h-12 text-sm sm:text-base font-semibold border-2 hover:bg-gray-50 dark:hover:bg-gray-800"
                 onClick={handleGoogleLogin}
               >
-                <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

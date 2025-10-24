@@ -119,30 +119,31 @@ export function HomePage() {
     <div className="min-h-screen relative overflow-hidden flex items-center">
       {/* Animated background */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-40 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-40 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-40 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-blue-500/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-40 right-1/4 w-64 h-64 md:w-96 md:h-96 bg-purple-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
       </div>
 
-      <div className="container py-8">
+      <div className="container px-4 sm:px-6 py-4 sm:py-8">
         {/* Hero Section with Form - Single Page Layout */}
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
           {/* Hero Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-4"
+            className="text-center space-y-3 sm:space-y-4"
           >
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
             >
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight flex flex-wrap items-center justify-center gap-x-3">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight flex flex-wrap items-center justify-center gap-x-2 gap-y-1 px-2">
                 <SparklesText className="inline-block">Shorten</SparklesText>
                 <span>your</span>
                 <AuroraText>Loooonng</AuroraText>
-                <span>URLs like never before!</span>
+                <span className="hidden sm:inline">URLs like never before!</span>
+                <span className="sm:hidden">URLs!</span>
               </h1>
             </motion.div>
             
@@ -150,7 +151,7 @@ export function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+              className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4"
             >
                 The Shortifi is an{" "}
                 <Highlighter action="underline" color="#FF9800" strokeWidth={3} padding={3}>
@@ -171,25 +172,25 @@ export function HomePage() {
             transition={{ delay: 0.5 }}
           >
             <Card className="backdrop-blur-sm bg-card/80 border-2">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-xl">
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                   Create Short Link
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-xs sm:text-sm">
                   Paste your long URL and get a shortened version instantly
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pb-6">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="url">Enter your link</Label>
+              <CardContent className="pb-4 sm:pb-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="url" className="text-sm">Enter your link</Label>
                     <div className="relative">
-                      <Link2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Link2 className="absolute left-3 top-2.5 sm:top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="url"
                         type="url"
                         placeholder="https://example.com/very/long/url"
-                        className="pl-10"
+                        className="pl-10 h-9 sm:h-10 text-sm"
                         {...register('url', { 
                           required: 'URL is required',
                           pattern: {
@@ -200,16 +201,17 @@ export function HomePage() {
                       />
                     </div>
                     {errors.url && (
-                      <p className="text-sm text-destructive">{errors.url.message}</p>
+                      <p className="text-xs sm:text-sm text-destructive">{errors.url.message}</p>
                     )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="shortCode">Custom short code (optional)</Label>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="shortCode" className="text-sm">Custom short code (optional)</Label>
                     <Input
                       id="shortCode"
                       type="text"
-                      placeholder="my-custom-code (leave empty for random)"
+                      placeholder="my-custom-code"
+                      className="h-9 sm:h-10 text-sm"
                       {...register('shortCode', {
                         minLength: {
                           value: 3,
@@ -226,18 +228,14 @@ export function HomePage() {
                       })}
                     />
                     {errors.shortCode && (
-                      <p className="text-sm text-destructive">{errors.shortCode.message}</p>
+                      <p className="text-xs sm:text-sm text-destructive">{errors.shortCode.message}</p>
                     )}
-                    {/* <p className="text-xs text-muted-foreground">
-                      Leave empty to generate a random short code automatically
-                    </p> */}
                   </div>
                 <CoolMode>
                   <Button
                     type="submit"
-                    className="w-full gap-2 group text-white"
+                    className="w-full gap-2 group text-white h-9 sm:h-10 text-sm sm:text-base"
                     disabled={isLoading}
-                    size="sm"
                   >
                     {isLoading ? 'Creating...' : 'Shorten Now!'}
                   </Button>
@@ -255,9 +253,9 @@ export function HomePage() {
               transition={{ delay: 0.7 }}
             >
               <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Your Recent Links</CardTitle>
-                  <CardDescription>
+                <CardHeader className="pb-2 sm:pb-3">
+                  <CardTitle className="text-base sm:text-lg">Your Recent Links</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">
                     Manage your shortened URLs
                   </CardDescription>
                 </CardHeader>
@@ -267,26 +265,26 @@ export function HomePage() {
                       key={link.id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center justify-between p-2 rounded-lg border bg-card hover:bg-accent/50 transition-colors group"
+                      className="flex items-center justify-between p-2 sm:p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors group"
                     >
-                      <div className="flex-1 min-w-0 space-y-0.5">
+                      <div className="flex-1 min-w-0 space-y-0.5 pr-2">
                         <div className="flex items-center gap-1">
                           <a
                             href={link.shortUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm font-mono font-semibold text-primary hover:underline flex items-center gap-1"
+                            className="text-xs sm:text-sm font-mono font-semibold text-primary hover:underline flex items-center gap-1 break-all"
                           >
                             {link.shortUrl}
-                            <ExternalLink className="h-3 w-3" />
+                            <ExternalLink className="h-3 w-3 flex-shrink-0" />
                           </a>
                         </div>
                         <p className="text-xs text-muted-foreground truncate flex items-center gap-1">
-                          <Link2 className="h-3 w-3" />
-                          {truncate(link.url, 60)}
+                          <Link2 className="h-3 w-3 flex-shrink-0" />
+                          <span className="truncate">{truncate(link.url, 40)}</span>
                         </p>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
                         <EditLinkDialog
                           link={link}
                           onSuccess={fetchLinks}
@@ -294,9 +292,9 @@ export function HomePage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
+                              className="h-7 w-7 sm:h-8 sm:w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
                             >
-                              <Edit className="h-3 w-3 text-blue-400" />
+                              <Edit className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-blue-400" />
                             </Button>
                           }
                         />
@@ -304,21 +302,21 @@ export function HomePage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleCopy(link.shortCode)}
-                          className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
+                          className="h-7 w-7 sm:h-8 sm:w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
                         >
                           {copiedId === link.shortCode ? (
-                            <Check className="h-3 w-3 text-green-500" />
+                            <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-green-500" />
                           ) : (
-                            <Copy className="h-3 w-3 text-foreground" />
+                            <Copy className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-foreground" />
                           )}
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => handleDelete(link.id)}
-                          className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
+                          className="h-7 w-7 sm:h-8 sm:w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
                         >
-                          <Trash2 className="h-3 w-3 text-red-500" />
+                          <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-red-500" />
                         </Button>
                       </div>
                     </motion.div>
@@ -327,7 +325,7 @@ export function HomePage() {
                   {links.length > 3 && (
                     <div className="flex justify-center pt-2">
                       <Link to="/dashboard">
-                        <Button variant="outline" size="sm" className="gap-2">
+                        <Button variant="outline" size="sm" className="gap-2 h-8 text-xs sm:text-sm">
                           View All {links.length} Links
                           <ExternalLink className="h-3 w-3" />
                         </Button>
@@ -358,7 +356,6 @@ export function HomePage() {
                   <Link to="/register">
                     <Button size="lg" className="gap-2">
                       Get Started Free
-                      <Sparkles className="h-4 w-4" />
                     </Button>
                   </Link>
                   <Link to="/login">

@@ -46,7 +46,7 @@ export function VerifyEmailPage() {
   }, [searchParams])
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-indigo-950 dark:to-gray-900">
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-indigo-950 dark:to-gray-900">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -54,10 +54,10 @@ export function VerifyEmailPage() {
         className="w-full max-w-md"
       >
         <Card className="border-2 shadow-2xl">
-          <CardHeader className="text-center pb-4">
-            <div className="flex justify-center mb-4">
+          <CardHeader className="text-center pb-3 sm:pb-4">
+            <div className="flex justify-center mb-3 sm:mb-4">
               {status === 'loading' && (
-                <Loader2 className="h-16 w-16 text-blue-500 animate-spin" />
+                <Loader2 className="h-12 w-12 sm:h-16 sm:w-16 text-blue-500 animate-spin" />
               )}
               {status === 'pending' && (
                 <motion.div
@@ -65,7 +65,7 @@ export function VerifyEmailPage() {
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', stiffness: 200, damping: 10 }}
                 >
-                  <Mail className="h-16 w-16 text-blue-500" />
+                  <Mail className="h-12 w-12 sm:h-16 sm:w-16 text-blue-500" />
                 </motion.div>
               )}
               {status === 'success' && (
@@ -74,7 +74,7 @@ export function VerifyEmailPage() {
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', stiffness: 200, damping: 10 }}
                 >
-                  <CheckCircle className="h-16 w-16 text-green-500" />
+                  <CheckCircle className="h-12 w-12 sm:h-16 sm:w-16 text-green-500" />
                 </motion.div>
               )}
               {status === 'error' && (
@@ -83,19 +83,19 @@ export function VerifyEmailPage() {
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', stiffness: 200, damping: 10 }}
                 >
-                  <XCircle className="h-16 w-16 text-red-500" />
+                  <XCircle className="h-12 w-12 sm:h-16 sm:w-16 text-red-500" />
                 </motion.div>
               )}
             </div>
             
-            <CardTitle className="text-2xl">
+            <CardTitle className="text-xl sm:text-2xl">
               {status === 'loading' && 'Verifying Your Email...'}
               {status === 'pending' && 'Check Your Email 📧'}
               {status === 'success' && 'Email Verified! 🎉'}
               {status === 'error' && 'Verification Failed'}
             </CardTitle>
             
-            <CardDescription className="mt-2">
+            <CardDescription className="mt-1.5 sm:mt-2 text-xs sm:text-sm">
               {status === 'pending' && user?.email && (
                 <>
                   {message}
@@ -109,16 +109,16 @@ export function VerifyEmailPage() {
             </CardDescription>
           </CardHeader>
           
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-2 sm:space-y-3">
             {status === 'pending' && (
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground text-center">
+                <p className="text-xs sm:text-sm text-muted-foreground text-center">
                   Click the verification link in the email to activate your account.
                 </p>
                 <Button
                   onClick={() => navigate('/')}
                   variant="outline"
-                  className="w-full"
+                  className="w-full h-9 sm:h-10 text-sm"
                 >
                   Back to Homepage
                 </Button>
@@ -129,14 +129,14 @@ export function VerifyEmailPage() {
               <div className="space-y-2">
                 <Button
                   onClick={() => navigate('/')}
-                  className="w-full"
+                  className="w-full h-9 sm:h-10 text-sm"
                 >
                   Go to Homepage
                 </Button>
                 <Button
                   onClick={() => navigate('/dashboard')}
                   variant="outline"
-                  className="w-full"
+                  className="w-full h-9 sm:h-10 text-sm"
                 >
                   Go to Dashboard
                 </Button>
@@ -147,14 +147,14 @@ export function VerifyEmailPage() {
               <div className="space-y-2">
                 <Button
                   onClick={() => navigate('/profile')}
-                  className="w-full"
+                  className="w-full h-9 sm:h-10 text-sm"
                 >
                   Resend Verification
                 </Button>
                 <Button
                   onClick={() => navigate('/')}
                   variant="outline"
-                  className="w-full"
+                  className="w-full h-9 sm:h-10 text-sm"
                 >
                   Go to Homepage
                 </Button>
