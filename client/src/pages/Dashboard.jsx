@@ -53,8 +53,9 @@ export function DashboardPage() {
     }
   }
 
-  const handleCopy = async (shortCode) => {
-    const url = `${window.location.origin}/${shortCode}`
+  const handleCopy = async (shortCode, shortUrl) => {
+    // Use the shortUrl from backend if available, otherwise construct it
+    const url = shortUrl || `${import.meta.env.VITE_API_URL}/${shortCode}`
     const success = await copyToClipboard(url)
     if (success) {
       setCopiedId(shortCode)
@@ -142,12 +143,12 @@ export function DashboardPage() {
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2 flex-wrap">
                         <code className="px-2 py-1 bg-primary/10 text-primary rounded font-mono text-xs break-all">
-                          {window.location.origin}/{link.shortCode}
+                          {link.shortUrl || `${import.meta.env.VITE_API_URL}/${link.shortCode}`}
                         </code>
                         <Button
                           size="icon"
                           variant="ghost"
-                          onClick={() => handleCopy(link.shortCode)}
+                          onClick={() => handleCopy(link.shortCode, link.shortUrl)}
                           className="h-7 w-7 flex-shrink-0"
                         >
                           {copiedId === link.shortCode ? (

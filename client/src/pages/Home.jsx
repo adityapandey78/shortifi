@@ -83,8 +83,9 @@ export function HomePage() {
   }
 
   // Handle copy to clipboard
-  const handleCopy = async (shortCode) => {
-    const url = `${window.location.origin}/${shortCode}`
+  const handleCopy = async (shortCode, shortUrl) => {
+    // Use the shortUrl from backend if available, otherwise construct it
+    const url = shortUrl || `${import.meta.env.VITE_API_URL}/${shortCode}`
     const success = await copyToClipboard(url)
     if (success) {
       setCopiedId(shortCode)
@@ -301,7 +302,7 @@ export function HomePage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleCopy(link.shortCode)}
+                          onClick={() => handleCopy(link.shortCode, link.shortUrl)}
                           className="h-7 w-7 sm:h-8 sm:w-8 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity bg-transparent hover:bg-transparent"
                         >
                           {copiedId === link.shortCode ? (
