@@ -331,7 +331,7 @@ export const sendNewVerifyEmailLink = async ({ userId, email }) => {
     const htmlOutput = mjml2html(filledTemplate).html;
     const emailResult = await sendEmail({
       to: email,
-      subject: "verify your email",
+      subject: "Verify Your Email - Shortifi",
       html: htmlOutput,
     });
     console.log("Email sent successfully:", emailResult);

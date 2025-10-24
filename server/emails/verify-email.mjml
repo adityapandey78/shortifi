@@ -1,152 +1,70 @@
 <mjml>
   <mj-head>
-    <mj-title>Verify Your Email Address</mj-title>
-    <mj-font
-      name="Roboto"
-      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
-    />
+    <mj-title>Verify Your Email Address - Shortifi</mj-title>
+    <mj-font name="Roboto" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
     <mj-attributes>
       <mj-all font-family="Roboto, Arial, sans-serif" />
     </mj-attributes>
-    <mj-style>
-      .token-container { background-color: #f5f7fa; border-radius: 8px;
-      font-family: monospace; letter-spacing: 5px; } .verification-button {
-      border-radius: 6px; transition: all 0.3s ease; } .footer-text { color:
-      #98a2b3; }
-    </mj-style>
   </mj-head>
-  <mj-body background-color="#ffffff">
-    <mj-section background-color="#ffffff">
+  <mj-body background-color="#f5f7fa">
+    <mj-section background-color="#ffffff" padding="40px 20px">
       <mj-column>
-        <mj-text
-          font-size="24px"
-          font-weight="500"
-          color="#1f2937"
-          align="center"
-          padding-bottom="20px"
-        >
+        <mj-text font-size="28px" font-weight="600" color="#1f2937" align="center" padding-bottom="10px">
+          Shortifi
+        </mj-text>
+        <mj-divider border-width="2px" border-color="#0070f3" width="60px" padding="0 0 20px 0" />
+        
+        <mj-text font-size="24px" font-weight="500" color="#1f2937" align="center" padding-bottom="20px">
           Verify Your Email Address
         </mj-text>
-        <mj-text
-          font-size="16px"
-          color="#4b5563"
-          line-height="24px"
-          padding-bottom="16px"
-        >
-          Thanks for signing up! Please verify your email address to complete
-          your registration.
+        
+        <mj-text font-size="16px" color="#4b5563" line-height="24px" padding-bottom="20px">
+          Hi there! 👋
         </mj-text>
-        <mj-text
-          font-size="16px"
-          color="#4b5563"
-          line-height="24px"
-          padding-bottom="24px"
-        >
-          Your verification code:
+        
+        <mj-text font-size="16px" color="#4b5563" line-height="24px" padding-bottom="20px">
+          Thank you for signing up with Shortifi. To complete your registration and start shortening URLs, please verify your email address.
+        </mj-text>
+        
+        <mj-text font-size="16px" color="#4b5563" line-height="24px" padding-bottom="10px">
+          Your verification code is:
         </mj-text>
 
-        <mj-text
-          css-class="token-container"
-          font-size="28px"
-          font-weight="bold"
-          color="#111827"
-          align="center"
-          padding="20px"
-        >
+        <mj-text font-size="32px" font-weight="bold" color="#0070f3" align="center" padding="20px" background-color="#f0f7ff" border-radius="8px" letter-spacing="8px">
           <%= code %>
         </mj-text>
 
-        <mj-spacer height="24px" />
-
-        <mj-text
-          font-size="16px"
-          color="#4b5563"
-          line-height="24px"
-          padding-bottom="24px"
-        >
-          Alternatively, you can directly verify your account by clicking the
-          button below:
+        <mj-spacer height="20px" />
+        
+        <mj-text font-size="16px" color="#4b5563" line-height="24px" padding-bottom="20px" align="center">
+          Or click the button below to verify instantly:
         </mj-text>
 
-        <mj-button
-          css-class="verification-button"
-          background-color="#0070f3"
-          color="white"
-          font-size="16px"
-          font-weight="500"
-          border-radius="6px"
-          inner-padding="15px 25px"
-          href="<%= link %>"
-        >
+        <mj-button background-color="#0070f3" color="#ffffff" font-size="16px" font-weight="500" border-radius="6px" padding="15px 40px" href="<%= link %>">
           Verify My Email
         </mj-button>
 
-        <mj-spacer height="24px" />
+        <mj-spacer height="20px" />
 
-        <mj-text font-size="16px" color="#4b5563" line-height="24px">
-          If you didn't sign up for this account, you can safely ignore this
-          email.
+        <mj-text font-size="14px" color="#6b7280" line-height="20px" align="center">
+          This code expires in 15 minutes
+        </mj-text>
+        
+        <mj-divider border-width="1px" border-color="#e5e7eb" padding="30px 0 20px 0" />
+
+        <mj-text font-size="14px" color="#6b7280" line-height="20px">
+          If you didn't create an account with Shortifi, you can safely ignore this email.
         </mj-text>
       </mj-column>
     </mj-section>
 
-    <mj-section padding="0">
-      <mj-column>
-        <mj-divider
-          border-width="1px"
-          border-color="#e5e7eb"
-          padding="30px 0"
-        />
-      </mj-column>
-    </mj-section>
-
-    <mj-section>
-      <mj-column>
-        <mj-text
-          css-class="footer-text"
-          font-size="14px"
-          color="#98a2b3"
-          line-height="20px"
-          align="center"
-        >
-          © 2025 Aditya Pandey. All rights reserved.
+    <mj-section padding="20px">
+      <mj:column>
+        <mj-text font-size="12px" color="#9ca3af" line-height="18px" align="center">
+          © 2025 Shortifi. All rights reserved.
         </mj-text>
-        <mj-text
-          css-class="footer-text"
-          font-size="14px"
-          color="#98a2b3"
-          line-height="20px"
-          align="center"
-          padding-top="8px"
-        >
-         Ranchi, India
-        </mj-text>
-
-        <mj-text
-          css-class="footer-text"
-          font-size="14px"
-          color="#0070f3"
-          line-height="20px"
-          align="center"
-          padding-top="16px"
-        >
-          <a
-            href="https://example.com/help"
-            style="color: #0070f3; text-decoration: none"
-            >Help Center</a
-          >
-          &nbsp;&nbsp;|&nbsp;&nbsp;
-          <a
-            href="https://example.com/terms"
-            style="color: #0070f3; text-decoration: none"
-            >Terms</a
-          >
-          &nbsp;&nbsp;|&nbsp;&nbsp;
-          <a
-            href="https://example.com/privacy"
-            style="color: #0070f3; text-decoration: none"
-            >Privacy</a
-          >
+        <mj-text font-size="12px" color="#9ca3af" line-height="18px" align="center" padding-top="8px">
+          This is an automated message, please do not reply to this email.
         </mj-text>
       </mj-column>
     </mj-section>

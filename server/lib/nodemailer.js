@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransporter({
   host: process.env.SMTP_HOST || "smtp.gmail.com",
   port: Number(process.env.SMTP_PORT) || 465,
   secure: (process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) === 465 : true),
@@ -8,16 +8,8 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
-  // optional: let nodemailer sign with DKIM if you manage keys yourself
-  // dkim: {
-  //   domainName: "yourdomain.com",
-  //   keySelector: "default",
-  //   privateKey: process.env.DKIM_PRIVATE_KEY
-  // }
 });
 
-// Verify SMTP connection in background (non-blocking)
-// Only logs warning if connection fails, doesn't crash the server
 transporter.verify((error, success) => {
   if (error) {
     console.warn('[SMTP] Connection failed. Email sending will not work:', error.message);
@@ -27,26 +19,30 @@ transporter.verify((error, success) => {
   }
 });
 
-export const sendEmail = async ({ to, subject, html, text, unsubscribeUrl }) => {
+export const sendEmail = async ({ to, subject, html, text }) => {
   try {
     const info = await transporter.sendMail({
-      from: `${process.env.FROM_NAME || "URL_SHORTNER"} <${process.env.SMTP_USER}>`,
+      from: `"${process.env.FROM_NAME || "Shortifi"}" <${process.env.SMTP_USER}>`,
       to,
       subject,
       text: text || htmlToPlaintext(html) || "",
       html,
       headers: {
-        // include List-Unsubscribe for bulk/marketing messages
-        ...(unsubscribeUrl ? { "List-Unsubscribe": `<${unsubscribeUrl}>` } : {}),
+        'X-Priority': '1',
+        'X-MSMail-Priority': 'High',
+        'Importance': 'high',
+        'X-Mailer': 'Shortifi',
       },
+      priority: 'high',
     });
+    console.log('[Email] Sent successfully to:', to);
     return info;
   } catch (err) {
+    console.error('[Email] Failed to send:', err);
     throw err;
   }
 };
 
 function htmlToPlaintext(html) {
-  // minimal fallback: strip tags (use a library for production)
   return html ? html.replace(/<\/?[^>]+(>|$)/g, "") : "";
 }

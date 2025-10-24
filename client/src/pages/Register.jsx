@@ -32,8 +32,8 @@ export function RegisterPage() {
       await registerUser(data)
       setUser({ email: data.email, name: data.name })
       toast({
-        title: 'Account created!',
-        description: 'Please check your email for verification.',
+        title: 'Account created! 🎉',
+        description: 'Please check your email (and spam folder) for verification link.',
       })
       navigate('/verify-email')
     } catch (error) {

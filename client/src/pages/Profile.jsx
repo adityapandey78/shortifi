@@ -60,13 +60,13 @@ export function ProfilePage() {
     try {
       await resendVerification()
       toast({
-        title: 'Email sent',
-        description: 'Verification email has been sent to your inbox',
+        title: 'Verification email sent! 📧',
+        description: 'Please check your inbox and spam folder for the verification email.',
       })
     } catch (error) {
       console.error('Failed to resend verification:', error)
       toast({
-        title: 'Error',
+        title: 'Failed to send',
         description: error.response?.data?.message || error.message || 'Failed to send verification email',
         variant: 'destructive',
       })
