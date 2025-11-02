@@ -278,7 +278,6 @@ export function DashboardPage() {
       {/* QR Code Dialog */}
       {selectedLink && (
         <QRCodeDialog
-          linkId={selectedLink.id}
           shortUrl={selectedLink.shortUrl || `${import.meta.env.VITE_API_URL}/${selectedLink.shortCode}`}
           open={qrCodeOpen}
           onOpenChange={setQrCodeOpen}
