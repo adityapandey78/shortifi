@@ -8,6 +8,8 @@ Shortifi is a comprehensive URL shortening platform that demonstrates proficienc
 - **Custom URL Shortening**: User-defined short codes with collision detection and validation
 - **Email Verification**: MJML-templated transactional emails with spam prevention
 - **Real-time Link Management**: CRUD operations with optimistic UI updates
+- **Advanced Analytics Dashboard**: Comprehensive click tracking with device detection, browser analysis, OS identification, and geographic location tracking using UAParser.js
+- **Client-Side QR Code Generation**: Instant QR code creation with react-qr-code, including PNG download capability via Canvas API without backend dependencies
 - **Responsive Design**: Mobile-first UI built with TailwindCSS and Framer Motion animations
 - **Production-Ready**: Deployed on Vercel with PostgreSQL database and connection pooling
 
