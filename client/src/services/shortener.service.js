@@ -67,3 +67,57 @@ export const deleteShortLink = async (id) => {
   const response = await api.delete(`/api/links/${id}`)
   return response.data
 }
+
+/**
+ * Get analytics for a specific link
+ * GET /api/analytics/link/:id
+ * @param {number} id - Link ID
+ * @returns {Promise<{success: boolean, data: Object}>}
+ */
+export const getLinkAnalytics = async (id) => {
+  const response = await api.get(`/api/analytics/link/${id}`)
+  return response.data
+}
+
+/**
+ * Get overall stats for user
+ * GET /api/analytics/stats
+ * @returns {Promise<{success: boolean, data: Object}>}
+ */
+export const getUserStats = async () => {
+  const response = await api.get('/api/analytics/stats')
+  return response.data
+}
+
+/**
+ * Get QR code for a link
+ * GET /api/analytics/qrcode/:id?format=dataurl
+ * @param {number} id - Link ID
+ * @returns {Promise<{success: boolean, data: {qrCode: string, shortUrl: string}}>}
+ */
+export const getQRCode = async (id) => {
+  const response = await api.get(`/api/analytics/qrcode/${id}?format=dataurl`)
+  return response.data
+}
+
+/**
+ * Download QR code as PNG
+ * @param {number} id - Link ID
+ * @param {string} filename - Desired filename
+ */
+export const downloadQRCode = async (id, filename = 'qrcode.png') => {
+  const response = await api.get(`/api/analytics/qrcode/${id}?format=png`, {
+    responseType: 'blob',
+  })
+  
+  // Create blob link to download
+  const url = window.URL.createObjectURL(new Blob([response.data]))
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', filename)
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  window.URL.revokeObjectURL(url)
+}
+

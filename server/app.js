@@ -2,10 +2,21 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import requestIp from "request-ip";
 
-import { db } from "./config/db-client.js";
+// Global error handlers to avoid process exit in development when unexpected
+process.on('unhandledRejection', (reason, p) => {
+  console.error('[UNHANDLED REJECTION] Promise:', p, 'Reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('[UNCAUGHT EXCEPTION] Error:', err);
+  // Do not call process.exit here during development; log and keep running.
+});
+
+import { db, pool } from "./config/db-client.js";
 import { env } from "./config/env.js";
 import { apiAuthRoutes } from "./routes/api-auth.routes.js";
 import { apiShortnerRoutes } from "./routes/api-shortner.routes.js";
+import analyticsRoutes from "./routes/analytics.routes.js";
 import { verifyAuthentication } from "./middlewares/verify-auth.middleware.js";
 import { redirectShortCode } from "./controllers/postShortner.controller.js";
 
@@ -50,6 +61,7 @@ app.use("/api", (req, res, next) => {
 // Register API routes (JSON responses for React frontend)
 app.use("/api/auth", apiAuthRoutes);
 app.use("/api/links", apiShortnerRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 // Health check endpoint
 app.get("/", (req, res) => {
@@ -67,12 +79,15 @@ app.get("/:shortcode", redirectShortCode);
 // Initialize database and start server
 const startServer = async () => {
   try {
-    // Optionally test DB connection here if needed
+    // Start server without blocking on DB connection
     app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
+      console.log(`✅ Server running at http://localhost:${PORT}`);
+      if (!db) {
+        console.warn('⚠️  Database not configured. Check your DATABASE_URL in .env');
+      }
     });
   } catch (error) {
-    console.error("Failed to connect to database:", error);
+    console.error("❌ Failed to start server:", error);
     process.exit(1);
   }
 };
@@ -80,9 +95,13 @@ const startServer = async () => {
 // Graceful shutdown
 process.on("SIGINT", async () => {
   console.log("Shutting down gracefully...");
-  if (db && typeof db.end === "function") {
-    await db.end();
-    console.log("Database connection closed");
+  if (pool && typeof pool.end === "function") {
+    try {
+      await pool.end();
+      console.log("Database connection closed");
+    } catch (err) {
+      console.error("Error closing database:", err.message);
+    }
   }
   process.exit(0);
 });

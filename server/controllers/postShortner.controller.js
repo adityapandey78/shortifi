@@ -1,7 +1,9 @@
 import crypto from "crypto";
 import z from "zod";
 import { loadLinks, saveLinks, getLinkByShortCode, findShortLinkById, updateShortLinkById,deleteShortCodeById } from "../services/shortner.services.js";
-import { shortnerSchema } from "../validators/shortner-validator.js"
+import { shortnerSchema } from "../validators/shortner-validator.js";
+import { trackClick } from "../services/analytics.services.js";
+import requestIp from "request-ip";
 
 // Render the homepage with the list of short links (user-specific when logged in)
 export const getShortnerpage = async (req, res) => {
@@ -117,6 +119,42 @@ export const redirectShortCode = async (req, res) => {
                 </div>
             `);
         }
+
+        // Check if link is active
+        if (!link.isActive) {
+            return res.status(410).send(`
+                <div style="text-align: center; margin-top: 50px;">
+                    <h2>Link Inactive</h2>
+                    <p>This link has been deactivated by the owner.</p>
+                    <a href="/" style="color: #007bff;">← Go to Homepage</a>
+                </div>
+            `);
+        }
+
+        // Check if link has expired
+        if (link.expiresAt && new Date(link.expiresAt) < new Date()) {
+            return res.status(410).send(`
+                <div style="text-align: center; margin-top: 50px;">
+                    <h2>Link Expired</h2>
+                    <p>This link has expired and is no longer available.</p>
+                    <a href="/" style="color: #007bff;">← Go to Homepage</a>
+                </div>
+            `);
+        }
+
+        // Track the click analytics (async, don't wait for it)
+        const clientIp = requestIp.getClientIp(req);
+        const userAgent = req.get('user-agent') || '';
+        const referer = req.get('referer') || req.get('referrer') || '';
+        
+        // Track analytics without blocking the redirect
+        trackClick(link.id, {
+            ip: clientIp,
+            userAgent,
+            referer,
+        }).catch(err => {
+            console.error('Error tracking click:', err);
+        });
 
         // Redirect to the original URL
         return res.redirect(link.url);

@@ -8,6 +8,7 @@ export default defineConfig({
   out: './drizzle/migration',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    // Use pooler URL for migrations (it works!)
+    url: process.env.DATABASE_POOLER_URL || process.env.DATABASE_URL,
   },
 });

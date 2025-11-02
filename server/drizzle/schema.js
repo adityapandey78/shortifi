@@ -33,6 +33,43 @@ export const short_links = pgTable('short_links', {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   userId: integer("user_id").notNull().references(()=>usersTable.id),
+  // New features
+  expiresAt: timestamp("expires_at"),
+  password: varchar('password', { length: 255 }),
+  clickCount: integer("click_count").default(0).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+});
+
+// Analytics table (tracks each click on a short link)
+export const analytics = pgTable('analytics', {
+  id: serial('id').primaryKey(),
+  linkId: integer("link_id").notNull().references(() => short_links.id, { onDelete: "cascade" }),
+  
+  // Request information
+  ip: varchar('ip', { length: 45 }), // IPv6 can be up to 45 chars
+  userAgent: text("user_agent"),
+  referer: varchar('referer', { length: 1024 }),
+  
+  // Device information
+  deviceType: varchar('device_type', { length: 50 }), // mobile, tablet, desktop
+  deviceVendor: varchar('device_vendor', { length: 100 }),
+  deviceModel: varchar('device_model', { length: 100 }),
+  
+  // Browser information
+  browser: varchar('browser', { length: 50 }),
+  browserVersion: varchar('browser_version', { length: 50 }),
+  
+  // OS information
+  os: varchar('os', { length: 50 }),
+  osVersion: varchar('os_version', { length: 50 }),
+  
+  // Location information
+  country: varchar('country', { length: 100 }),
+  region: varchar('region', { length: 100 }),
+  city: varchar('city', { length: 100 }),
+  timezone: varchar('timezone', { length: 100 }),
+  
+  clickedAt: timestamp("clicked_at").defaultNow().notNull(),
 });
 
 /*
@@ -48,10 +85,19 @@ export const usersRelation = relations(usersTable,({many})=>({
 }))
 
 // Relation: a short link belongs to one user
-export const shortLinksrelations = relations(short_links,({one})=>({
+export const shortLinksrelations = relations(short_links,({one, many})=>({
   user: one(usersTable,{
     fields:[short_links.userId],
     references:[usersTable.id],
+  }),
+  analytics: many(analytics)
+}))
+
+// Relation: analytics belongs to one short link
+export const analyticsRelation = relations(analytics, ({ one }) => ({
+  link: one(short_links, {
+    fields: [analytics.linkId],
+    references: [short_links.id],
   })
 }))
 
