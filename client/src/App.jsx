@@ -1,6 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Header } from '@/components/Header'
 import { Toaster } from '@/components/ui/toaster'
+import { LandingPage } from '@/pages/LandingPage'
 import { HomePage } from '@/pages/Home'
 import { LoginPage } from '@/pages/Login'
 import { RegisterPage } from '@/pages/Register'
@@ -15,6 +16,18 @@ import { useEffect } from 'react'
  * Main App Component
  * Sets up routing and global layout
  */
+
+// Protected Route wrapper for authenticated pages
+function ProtectedRoute({ children }) {
+  const { isAuthenticated } = useStore()
+  return isAuthenticated ? children : <Navigate to="/landing" replace />
+}
+
+// Public Route wrapper (redirect to home if already authenticated)
+function PublicRoute({ children }) {
+  const { isAuthenticated } = useStore()
+  return !isAuthenticated ? children : <Navigate to="/" replace />
+}
 
 function App() {
   const { theme, setUser, setAuthenticated } = useStore()
@@ -55,11 +68,56 @@ function App() {
         <Header />
         <main>
           <Routes>
+            {/* Root path - shows HomePage if authenticated, otherwise redirects to landing */}
             <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
+            
+            {/* Landing page for non-authenticated users */}
+            <Route 
+              path="/landing" 
+              element={
+                <PublicRoute>
+                  <LandingPage />
+                </PublicRoute>
+              } 
+            />
+            
+            {/* Auth routes - redirect to home if already logged in */}
+            <Route 
+              path="/login" 
+              element={
+                <PublicRoute>
+                  <LoginPage />
+                </PublicRoute>
+              } 
+            />
+            <Route 
+              path="/register" 
+              element={
+                <PublicRoute>
+                  <RegisterPage />
+                </PublicRoute>
+              } 
+            />
+            
+            {/* Protected routes */}
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Email verification route */}
             <Route path="/verify-email" element={<VerifyEmailPage />} />
           </Routes>
         </main>

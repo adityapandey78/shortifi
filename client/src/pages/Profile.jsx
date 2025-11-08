@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { getCurrentUser, resendVerification } from '@/services/auth.service'
 import { useToast } from '@/hooks/use-toast'
 import { formatDate } from '@/lib/utils'
+import { Footer } from '@/components/Footer'
 
 /**
  * Profile Page Component
@@ -82,12 +83,13 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="container px-4 sm:px-6 py-4 sm:py-8 max-w-4xl">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-4 sm:space-y-6"
-      >
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 container px-4 sm:px-6 py-4 sm:py-8 max-w-4xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-4 sm:space-y-6"
+        >
         {/* Header */}
         <div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Profile</h1>
@@ -189,6 +191,10 @@ export function ProfilePage() {
           </CardContent>
         </Card>
       </motion.div>
+      </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

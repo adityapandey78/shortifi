@@ -34,7 +34,7 @@ export function Header() {
         title: 'Logged out',
         description: 'See you soon!',
       })
-      navigate('/login')
+      navigate('/landing')
     } catch (error) {
       toast({
         title: 'Error',
@@ -49,7 +49,7 @@ export function Header() {
       <div className="container px-4 sm:px-6 flex h-14 sm:h-16 items-center justify-between">
         {/* Logo */}
         <Link 
-          to="/" 
+          to={isAuthenticated ? "/" : "/landing"} 
           className="flex items-center space-x-2 group"
         >
           
@@ -87,7 +87,7 @@ export function Header() {
                 <Button variant="ghost" size="sm" className="text-sm">Login</Button>
               </Link>
               <Link to="/register">
-                <Button size="sm" className="text-sm">Get Started</Button>
+                <Button size="sm" className="text-sm bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">Get Started</Button>
               </Link>
             </>
           )}
@@ -154,7 +154,7 @@ export function Header() {
                     <Button variant="ghost" size="sm" className="w-full h-10">Login</Button>
                   </Link>
                   <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                    <Button size="sm" className="w-full h-10">Get Started</Button>
+                    <Button size="sm" className="w-full h-10 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">Get Started</Button>
                   </Link>
                 </>
               )}

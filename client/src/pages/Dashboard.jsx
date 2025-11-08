@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Link, Edit, Trash2, Copy, Check, ExternalLink, Calendar, QrCode, BarChart3 } from 'lucide-react'
+import { Link as LinkIcon, Edit, Trash2, Copy, Check, ExternalLink, Calendar, QrCode, BarChart3, Link2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
 import { deleteShortLink, getAllLinks, getLinkAnalytics } from '@/services/shortener.service'
 import { useStore } from '@/store/useStore'
-import { copyToClipboard, formatDate, extractDomain } from '@/lib/utils'
+import { copyToClipboard, formatDate, truncate } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
 import { EditLinkDialog } from '@/components/EditLinkDialog'
 import { QRCodeDialog } from '@/components/QRCodeDialog'
 import { LinkAnalytics } from '@/components/LinkAnalytics'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Footer } from '@/components/Footer'
 
 /**
  * Dashboard Page Component
@@ -129,175 +130,200 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="container px-4 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">My Links</h1>
-        <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
-          Manage all your shortened URLs in one place
-        </p>
-      </motion.div>
-
-      {links.length === 0 ? (
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 container px-4 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-8">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
         >
-          <Card className="text-center py-8 sm:py-12">
-            <CardContent className="space-y-3 sm:space-y-4">
-              <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 flex items-center justify-center">
-                <Link className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-xl sm:text-2xl font-semibold">No links yet</h3>
-                <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
-                  Start creating short links from the home page
-                </p>
-              </div>
-              <Button onClick={() => navigate('/')} size="default" className="h-9 sm:h-10 text-sm sm:text-base">
-                Create Your First Link
-              </Button>
-            </CardContent>
-          </Card>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">My Links</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
+            Manage all your shortened URLs in one place
+          </p>
         </motion.div>
-      ) : (
-        <div className="grid gap-2 sm:gap-3">
-          {links.map((link, index) => (
-            <motion.div
-              key={link.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <Card className="hover:shadow-md transition-all">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="space-y-2">
-                    {/* Short URL row with actions */}
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <code className="px-2 py-1 bg-primary/10 text-primary rounded font-mono text-xs break-all flex-1 min-w-0">
-                        {link.shortUrl || `${import.meta.env.VITE_API_URL}/${link.shortCode}`}
-                      </code>
-                      <div className="flex items-center gap-1 flex-shrink-0 flex-wrap">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleCopy(link.shortCode, link.shortUrl)}
-                          className="h-7 text-xs px-2"
+
+        {links.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="text-center py-8 sm:py-12">
+              <CardContent className="space-y-3 sm:space-y-4">
+                <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                  <LinkIcon className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-semibold">No links yet</h3>
+                  <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
+                    Start creating short links from the home page
+                  </p>
+                </div>
+                <Button onClick={() => navigate('/')} size="default" className="h-9 sm:h-10 text-sm sm:text-base">
+                  Create Your First Link
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="border-2 shadow-lg">
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="text-base sm:text-lg">All Your Links</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">
+                  {links.length} {links.length === 1 ? 'link' : 'links'} created
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="border-b border-border">
+                      <tr className="text-left">
+                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Short Link</th>
+                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">Original URL</th>
+                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center hidden lg:table-cell">Date</th>
+                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center">QR Code</th>
+                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center">Analytics</th>
+                        <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {links.map((link, index) => (
+                        <motion.tr
+                          key={link.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.03 }}
+                          className="hover:bg-muted/50 transition-colors"
                         >
-                          {copiedId === link.shortCode ? (
-                            <>
-                              <Check className="h-3.5 w-3.5 mr-1" />
-                              Copied
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="h-3.5 w-3.5 mr-1" />
-                              Copy
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleShowQRCode(link)}
-                          className="h-7 text-xs px-2"
-                        >
-                          <QrCode className="h-3.5 w-3.5 mr-1" />
-                          QR Code
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleShowAnalytics(link)}
-                          className="h-7 text-xs px-2"
-                        >
-                          <BarChart3 className="h-3.5 w-3.5 mr-1" />
-                          Analytics
-                        </Button>
-                        <EditLinkDialog
-                          link={link}
-                          onSuccess={fetchLinks}
-                          trigger={
+                          <td className="px-4 py-3">
+                            <div className="space-y-1">
+                              <a
+                                href={link.shortUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm font-mono font-semibold text-primary hover:text-primary/80 flex items-center gap-1.5"
+                              >
+                                <span className="truncate max-w-[150px]">{link.shortUrl?.replace('http://', '').replace('https://', '')}</span>
+                                <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                              </a>
+                              {link.clickCount !== undefined && (
+                                <p className="text-xs text-muted-foreground">
+                                  {link.clickCount} {link.clickCount === 1 ? 'click' : 'clicks'}
+                                </p>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 hidden md:table-cell">
+                            <div className="flex items-center gap-1.5 max-w-xs">
+                              <Link2 className="h-3 w-3 flex-shrink-0 text-muted-foreground" />
+                              <span className="text-xs text-foreground truncate">{truncate(link.url, 50)}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-center hidden lg:table-cell">
+                            <div className="flex items-center justify-center gap-1.5">
+                              <Calendar className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">{formatDate(link.createdAt)}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-center">
                             <Button
-                              size="sm"
                               variant="ghost"
-                              className="h-7 text-xs px-2"
+                              size="icon"
+                              onClick={() => handleShowQRCode(link)}
+                              className="h-8 w-8 bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 dark:text-blue-400 border border-blue-400/40 hover:border-blue-400/60"
                             >
-                              <Edit className="h-3.5 w-3.5 mr-1" />
-                              Edit
+                              <QrCode className="h-4 w-4" />
                             </Button>
-                          }
-                        />
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleDelete(link.id)}
-                          className="h-7 text-xs px-2 text-orange-500 hover:text-orange-700"
-                        >
-                          <Trash2 className="h-3.5 w-3.5 mr-1" />
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    {/* Original URL */}
-                    <div className="flex items-start gap-2 text-xs text-muted-foreground">
-                      <ExternalLink className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:underline break-all"
-                      >
-                        {link.url}
-                      </a>
-                    </div>
-                    
-                    {/* Metadata */}
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3 flex-shrink-0" />
-                      {formatDate(link.createdAt)}
-                      {link.clickCount !== undefined && (
-                        <>
-                          <span className="mx-1">•</span>
-                          <span className="font-medium text-primary">{link.clickCount} clicks</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      )}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleShowAnalytics(link)}
+                              className="h-8 w-8 bg-purple-500/20 hover:bg-purple-500/30 text-purple-600 dark:text-purple-400 border border-purple-400/40 hover:border-purple-400/60"
+                            >
+                              <BarChart3 className="h-4 w-4" />
+                            </Button>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center justify-center gap-1">
+                              <EditLinkDialog
+                                link={link}
+                                onSuccess={fetchLinks}
+                                trigger={
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 transition-opacity bg-transparent hover:bg-muted"
+                                  >
+                                    <Edit className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                                  </Button>
+                                }
+                              />
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleCopy(link.shortCode, link.shortUrl)}
+                                className="h-7 w-7 transition-opacity bg-transparent hover:bg-muted"
+                              >
+                                {copiedId === link.shortCode ? (
+                                  <Check className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                                ) : (
+                                  <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                                )}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDelete(link.id)}
+                                className="h-7 w-7 transition-opacity bg-transparent hover:bg-muted"
+                              >
+                                <Trash2 className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
+                              </Button>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
-      {/* QR Code Dialog */}
-      {selectedLink && (
-        <QRCodeDialog
-          shortUrl={selectedLink.shortUrl || `${import.meta.env.VITE_API_URL}/${selectedLink.shortCode}`}
-          open={qrCodeOpen}
-          onOpenChange={setQrCodeOpen}
-        />
-      )}
+        {/* QR Code Dialog */}
+        {selectedLink && (
+          <QRCodeDialog
+            shortUrl={selectedLink.shortUrl || `${import.meta.env.VITE_API_URL}/${selectedLink.shortCode}`}
+            open={qrCodeOpen}
+            onOpenChange={setQrCodeOpen}
+          />
+        )}
 
-      {/* Analytics Dialog */}
-      {selectedLink && (
-        <Dialog open={analyticsOpen} onOpenChange={setAnalyticsOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Analytics for {selectedLink.shortCode}</DialogTitle>
-              <DialogDescription>
-                Detailed analytics and statistics for this short link
-              </DialogDescription>
-            </DialogHeader>
-            <LinkAnalytics analytics={analyticsData} loading={analyticsLoading} />
-          </DialogContent>
-        </Dialog>
-      )}
+        {/* Analytics Dialog */}
+        {selectedLink && (
+          <Dialog open={analyticsOpen} onOpenChange={setAnalyticsOpen}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Analytics for {selectedLink.shortCode}</DialogTitle>
+                <DialogDescription>
+                  Detailed analytics and statistics for this short link
+                </DialogDescription>
+              </DialogHeader>
+              <LinkAnalytics analytics={analyticsData} loading={analyticsLoading} />
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }
