@@ -2,6 +2,7 @@ import { db } from "../config/db-client.js";
 import { analytics, short_links } from '../drizzle/schema.js';
 import { eq, desc, sql, and, gte } from 'drizzle-orm';
 import { UAParser } from 'ua-parser-js';
+import geoip from 'fast-geoip';
 
 /**
  * Analytics Service
@@ -32,18 +33,52 @@ function parseUserAgent(userAgentString) {
 }
 
 /**
- * Get approximate location from IP address
- * Note: For production, consider using a premium GeoIP service or MaxMind GeoIP2
+ * Get location information from IP address using fast-geoip
+ * @param {string} ip - IP address to lookup
+ * @returns {Promise<Object>} Location information
  */
-function getLocationFromIP(ip) {
-  // Basic implementation - in production, use MaxMind GeoIP2 or similar
-  // For now, return null values - you can integrate MaxMind later
-  return {
-    country: null,
-    region: null,
-    city: null,
-    timezone: null,
-  };
+async function getLocationFromIP(ip) {
+  try {
+    // Handle localhost and private IPs
+    if (!ip || ip === '::1' || ip === '127.0.0.1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.')) {
+      return {
+        country: 'Local',
+        region: 'Local',
+        city: 'Local',
+        timezone: null,
+      };
+    }
+
+    // Clean IPv6-mapped IPv4 addresses (e.g., ::ffff:192.168.1.1 -> 192.168.1.1)
+    const cleanedIp = ip.replace(/^::ffff:/i, '');
+    
+    const geo = await geoip.lookup(cleanedIp);
+    
+    if (geo) {
+      return {
+        country: geo.country || null,
+        region: geo.region || null,
+        city: geo.city || null,
+        timezone: geo.timezone || null,
+      };
+    }
+    
+    // If lookup fails, return null values
+    return {
+      country: null,
+      region: null,
+      city: null,
+      timezone: null,
+    };
+  } catch (error) {
+    console.error('Error in getLocationFromIP:', error);
+    return {
+      country: null,
+      region: null,
+      city: null,
+      timezone: null,
+    };
+  }
 }
 
 /**
@@ -59,8 +94,8 @@ export const trackClick = async (linkId, requestData) => {
     // Parse user agent to get device/browser/OS info
     const deviceInfo = parseUserAgent(userAgent);
     
-    // Get location from IP (basic implementation)
-    const locationInfo = getLocationFromIP(ip);
+    // Get location from IP (async operation)
+    const locationInfo = await getLocationFromIP(ip);
     
     // Insert analytics record
     const result = await db.insert(analytics).values({
@@ -99,7 +134,7 @@ export const getLinkAnalytics = async (linkId) => {
       .where(eq(analytics.linkId, linkId))
       .orderBy(desc(analytics.clickedAt));
     
-    // Get link details with click count
+    // Get link details
     const link = await db.select()
       .from(short_links)
       .where(eq(short_links.id, linkId))
@@ -109,8 +144,15 @@ export const getLinkAnalytics = async (linkId) => {
       return null;
     }
     
-    // Calculate aggregations
+    // Use actual analytics records count for accurate total clicks
     const totalClicks = clicks.length;
+    
+    // Sync the clickCount in short_links table if it's different
+    if (link[0].clickCount !== totalClicks) {
+      await db.update(short_links)
+        .set({ clickCount: totalClicks })
+        .where(eq(short_links.id, linkId));
+    }
     
     // Group by device type
     const deviceBreakdown = clicks.reduce((acc, click) => {
@@ -133,10 +175,19 @@ export const getLinkAnalytics = async (linkId) => {
       return acc;
     }, {});
     
-    // Group by country
+    // Group by country and region combined for better geographic insights
     const countryBreakdown = clicks.reduce((acc, click) => {
       const country = click.country || 'Unknown';
       acc[country] = (acc[country] || 0) + 1;
+      return acc;
+    }, {});
+    
+    // Separate region breakdown
+    const regionBreakdown = clicks.reduce((acc, click) => {
+      if (click.region) {
+        const regionKey = click.country ? `${click.region}, ${click.country}` : click.region;
+        acc[regionKey] = (acc[regionKey] || 0) + 1;
+      }
       return acc;
     }, {});
     
@@ -160,13 +211,14 @@ export const getLinkAnalytics = async (linkId) => {
       linkId,
       shortCode: link[0].shortCode,
       url: link[0].url,
-      totalClicks: link[0].clickCount,
+      totalClicks,
       analytics: {
         totalClicks,
         deviceBreakdown,
         browserBreakdown,
         osBreakdown,
         countryBreakdown,
+        regionBreakdown,
         clicksByDate,
         referrerBreakdown,
       },

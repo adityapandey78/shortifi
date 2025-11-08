@@ -63,6 +63,16 @@ export function LinkAnalytics({ analytics, loading }) {
     .sort((a, b) => b.value - a.value)
     .slice(0, 10)
 
+  const regionData = data.regionBreakdown 
+    ? Object.entries(data.regionBreakdown)
+        .map(([name, value]) => ({
+          name: name || 'Unknown',
+          value,
+        }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 10)
+    : []
+
   return (
     <div className="space-y-6">
       {/* Overview Stats */}
@@ -214,6 +224,27 @@ export function LinkAnalytics({ analytics, loading }) {
         </Card>
       </div>
 
+      {/* Regions */}
+      {regionData.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Regions</CardTitle>
+            <CardDescription>Regional distribution of clicks</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <RechartsBar data={regionData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#8884d8" />
+              </RechartsBar>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Recent Clicks */}
       {recentClicks && recentClicks.length > 0 && (
         <Card>
@@ -223,18 +254,24 @@ export function LinkAnalytics({ analytics, loading }) {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentClicks.map((click, index) => (
-                <div key={index} className="flex items-center justify-between border-b pb-2">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">
-                      {click.deviceType || 'Unknown'} • {click.browser || 'Unknown'} • {click.os || 'Unknown'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {click.country || 'Unknown location'} • {format(new Date(click.clickedAt), 'PPp')}
-                    </p>
+              {recentClicks.map((click, index) => {
+                const location = [click.city, click.region, click.country]
+                  .filter(Boolean)
+                  .join(', ') || 'Unknown location';
+                
+                return (
+                  <div key={index} className="flex items-center justify-between border-b pb-2">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">
+                        {click.deviceType || 'Unknown'} • {click.browser || 'Unknown'} • {click.os || 'Unknown'}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {location} • {format(new Date(click.clickedAt), 'PPp')}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>

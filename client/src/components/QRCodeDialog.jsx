@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { QRCodeSVG } from 'react-qr-code'
+import { QRCodeSVG } from 'qrcode.react'
 import { Download, X } from 'lucide-react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useToast } from '@/hooks/use-toast'
@@ -20,43 +20,46 @@ export function QRCodeDialog({ shortUrl, open, onOpenChange }) {
         return
       }
 
-      // Create canvas
+      // Get the SVG data
+      const svgData = new XMLSerializer().serializeToString(svg)
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
-      const svgString = new XMLSerializer().serializeToString(svg)
-      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
-      const url = URL.createObjectURL(svgBlob)
       const img = new Image()
 
+      // Set canvas size (larger for better quality)
+      canvas.width = 512
+      canvas.height = 512
+
       img.onload = () => {
-        canvas.width = img.width
-        canvas.height = img.height
+        // Fill white background
         ctx.fillStyle = '#ffffff'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
-        ctx.drawImage(img, 0, 0)
+        
+        // Draw the QR code
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
 
+        // Convert to blob and download
         canvas.toBlob((blob) => {
           if (blob) {
-            const downloadUrl = URL.createObjectURL(blob)
+            const url = URL.createObjectURL(blob)
             const a = document.createElement('a')
-            a.href = downloadUrl
-            a.download = `qr-${shortUrl.split('/').pop()}.png`
+            const shortCode = shortUrl.split('/').pop()
+            a.href = url
+            a.download = `qrcode-${shortCode}.png`
             document.body.appendChild(a)
             a.click()
             document.body.removeChild(a)
-            URL.revokeObjectURL(downloadUrl)
+            URL.revokeObjectURL(url)
             
             toast({
               title: 'Success',
-              description: 'QR code downloaded',
+              description: 'QR code downloaded successfully',
             })
           }
-        })
-        URL.revokeObjectURL(url)
+        }, 'image/png')
       }
 
       img.onerror = () => {
-        URL.revokeObjectURL(url)
         toast({
           title: 'Error',
           description: 'Failed to process QR code',
@@ -64,6 +67,9 @@ export function QRCodeDialog({ shortUrl, open, onOpenChange }) {
         })
       }
 
+      // Create blob URL from SVG
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
+      const url = URL.createObjectURL(svgBlob)
       img.src = url
     } catch (error) {
       console.error('Download error:', error)
