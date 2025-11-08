@@ -3,6 +3,7 @@ import { analytics, short_links } from '../drizzle/schema.js';
 import { eq, desc, sql, and, gte } from 'drizzle-orm';
 import { UAParser } from 'ua-parser-js';
 import geoip from 'fast-geoip';
+import { getRegionName, getCountryName } from '../lib/geo-utils.js';
 
 /**
  * Analytics Service
@@ -43,7 +44,7 @@ async function getLocationFromIP(ip) {
     if (!ip || ip === '::1' || ip === '127.0.0.1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.')) {
       return {
         country: 'Local',
-        region: 'Local',
+        region: 'Local Network',
         city: 'Local',
         timezone: null,
       };
@@ -55,9 +56,13 @@ async function getLocationFromIP(ip) {
     const geo = await geoip.lookup(cleanedIp);
     
     if (geo) {
+      // Get full country and region names
+      const countryName = getCountryName(geo.country);
+      const regionName = getRegionName(geo.region, geo.country);
+      
       return {
-        country: geo.country || null,
-        region: geo.region || null,
+        country: countryName || geo.country || null,
+        region: regionName || geo.region || null,
         city: geo.city || null,
         timezone: geo.timezone || null,
       };

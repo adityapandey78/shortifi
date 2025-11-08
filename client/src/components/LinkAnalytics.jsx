@@ -224,6 +224,22 @@ export function LinkAnalytics({ analytics, loading }) {
         </Card>
       </div>
 
+      {/* Location Info Notice */}
+      <Card className="bg-muted/50">
+        <CardContent className="pt-6">
+          <div className="flex gap-3 text-sm text-muted-foreground">
+            <div className="mt-0.5">ℹ️</div>
+            <div>
+              <p className="font-medium text-foreground mb-1">About Location Data</p>
+              <p>
+                Geographic information is determined by IP address and shows the approximate location or ISP routing hub. 
+                Actual user locations may vary. For example, users in Jharkhand might show as Kolkata if their ISP routes through West Bengal.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Regions */}
       {regionData.length > 0 && (
         <Card>

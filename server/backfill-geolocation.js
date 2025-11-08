@@ -2,6 +2,7 @@ import { db } from "./config/db-client.js";
 import { analytics } from './drizzle/schema.js';
 import { isNull, or, eq } from 'drizzle-orm';
 import geoip from 'fast-geoip';
+import { getRegionName, getCountryName } from './lib/geo-utils.js';
 
 /**
  * Backfill geolocation data for existing analytics records
@@ -14,7 +15,7 @@ async function getLocationFromIP(ip) {
     if (!ip || ip === '::1' || ip === '127.0.0.1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.')) {
       return {
         country: 'Local',
-        region: 'Local',
+        region: 'Local Network',
         city: 'Local',
         timezone: null,
       };
@@ -26,9 +27,13 @@ async function getLocationFromIP(ip) {
     const geo = await geoip.lookup(cleanedIp);
     
     if (geo) {
+      // Get full country and region names
+      const countryName = getCountryName(geo.country);
+      const regionName = getRegionName(geo.region, geo.country);
+      
       return {
-        country: geo.country || null,
-        region: geo.region || null,
+        country: countryName || geo.country || null,
+        region: regionName || geo.region || null,
         city: geo.city || null,
         timezone: geo.timezone || null,
       };
@@ -53,22 +58,16 @@ async function getLocationFromIP(ip) {
 
 async function backfillGeolocation() {
   try {
-    console.log('Starting geolocation backfill...\n');
+    console.log('Starting geolocation backfill with improved region names...\n');
 
-    // Find analytics records with IP but missing location data
+    // Find ALL analytics records to update with full region names
     const recordsToUpdate = await db.select()
-      .from(analytics)
-      .where(
-        or(
-          isNull(analytics.country),
-          eq(analytics.country, '')
-        )
-      );
+      .from(analytics);
 
     console.log(`Found ${recordsToUpdate.length} records to update\n`);
 
     if (recordsToUpdate.length === 0) {
-      console.log('No records need updating. All done!');
+      console.log('No records found. Database might be empty.');
       return;
     }
 
@@ -109,6 +108,7 @@ async function backfillGeolocation() {
     console.log(`✓ Successfully updated: ${updated} records`);
     console.log(`✗ Failed: ${failed} records`);
     console.log(`Total processed: ${recordsToUpdate.length} records`);
+    console.log('\n💡 Region names now show full names (e.g., "Jharkhand" instead of "JH")');
 
   } catch (error) {
     console.error('Error during backfill:', error);
