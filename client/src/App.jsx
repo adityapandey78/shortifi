@@ -1,16 +1,27 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
 import { Header } from '@/components/Header'
 import { Toaster } from '@/components/ui/toaster'
-import { LandingPage } from '@/pages/LandingPage'
-import { HomePage } from '@/pages/Home'
-import { LoginPage } from '@/pages/Login'
-import { RegisterPage } from '@/pages/Register'
-import { DashboardPage } from '@/pages/Dashboard'
-import { ProfilePage } from '@/pages/Profile'
-import { VerifyEmailPage } from '@/pages/VerifyEmail'
 import { useStore } from '@/store/useStore'
 import { getCurrentUser } from '@/services/auth.service'
-import { useEffect } from 'react'
+
+// Lazy load pages for better performance
+const LandingPage = lazy(() => import('@/pages/LandingPage').then(module => ({ default: module.LandingPage })))
+const HomePage = lazy(() => import('@/pages/Home').then(module => ({ default: module.HomePage })))
+const LoginPage = lazy(() => import('@/pages/Login').then(module => ({ default: module.LoginPage })))
+const RegisterPage = lazy(() => import('@/pages/Register').then(module => ({ default: module.RegisterPage })))
+const DashboardPage = lazy(() => import('@/pages/Dashboard').then(module => ({ default: module.DashboardPage })))
+const ProfilePage = lazy(() => import('@/pages/Profile').then(module => ({ default: module.ProfilePage })))
+const VerifyEmailPage = lazy(() => import('@/pages/VerifyEmail').then(module => ({ default: module.VerifyEmailPage })))
+
+// Loading component
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    </div>
+  )
+}
 
 /**
  * Main App Component
@@ -67,63 +78,65 @@ function App() {
       <div className="min-h-screen bg-background text-foreground">
         <Header />
         <main>
-          <Routes>
-            {/* Root path - shows HomePage if authenticated, otherwise redirects to landing */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-              } />
-            
-            {/* Landing page for non-authenticated users */}
-            <Route 
-              path="/landing" 
-              element={
-                <PublicRoute>
-                  <LandingPage />
-                </PublicRoute>
-              } 
-            />
-            
-            {/* Auth routes - redirect to home if already logged in */}
-            <Route 
-              path="/login" 
-              element={
-                <PublicRoute>
-                  <LoginPage />
-                </PublicRoute>
-              } 
-            />
-            <Route 
-              path="/register" 
-              element={
-                <PublicRoute>
-                  <RegisterPage />
-                </PublicRoute>
-              } 
-            />
-            
-            {/* Protected routes */}
-            <Route 
-              path="/dashboard" 
-              element={
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Root path - shows HomePage if authenticated, otherwise redirects to landing */}
+              <Route path="/" element={
                 <ProtectedRoute>
-                  <DashboardPage />
+                  <HomePage />
                 </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/profile" 
-              element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Email verification route */}
-            <Route path="/verify-email" element={<VerifyEmailPage />} />
-          </Routes>
+                } />
+              
+              {/* Landing page for non-authenticated users */}
+              <Route 
+                path="/landing" 
+                element={
+                  <PublicRoute>
+                    <LandingPage />
+                  </PublicRoute>
+                } 
+              />
+              
+              {/* Auth routes - redirect to home if already logged in */}
+              <Route 
+                path="/login" 
+                element={
+                  <PublicRoute>
+                    <LoginPage />
+                  </PublicRoute>
+                } 
+              />
+              <Route 
+                path="/register" 
+                element={
+                  <PublicRoute>
+                    <RegisterPage />
+                  </PublicRoute>
+                } 
+              />
+              
+              {/* Protected routes */}
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Email verification route */}
+              <Route path="/verify-email" element={<VerifyEmailPage />} />
+            </Routes>
+          </Suspense>
         </main>
         <Toaster />
       </div>

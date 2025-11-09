@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <!-- Preconnect to external domains for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -16,10 +21,12 @@
     <meta name="description" content="Shortifi - Modern URL shortener. Shorten your long URLs and track their performance with analytics." />
     <meta name="keywords" content="url shortener, link shortener, short link, analytics, tracking" />
     
-    <!-- Google Fonts - Instrument Serif -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Google Fonts - Instrument Serif with display=swap for better performance -->
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical images -->
+    <link rel="preload" as="image" href="/Analytics.png" media="(min-width: 768px)">
+    <link rel="preload" as="image" href="/smartLinkManagement.png" media="(min-width: 768px)">
     
     <title>Shortifi - Modern URL Shortener</title>
   </head>

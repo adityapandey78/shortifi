@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { 
@@ -15,15 +15,20 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import Prism from '@/components/Prism'
-import ColorBends from '@/components/ColorBends'
-import Iridescence from '@/components/Iridescence'
-import MagicBento from '@/components/MagicBento'
 import { AuroraText } from '@/components/ui/aurora-text'
 import { SparklesText } from '@/components/ui/sparkles-text'
 import { useToast } from '@/hooks/use-toast'
 import { useStore } from '@/store/useStore'
 import { Footer } from '@/components/Footer'
+
+// Lazy load heavy components
+const Prism = lazy(() => import('@/components/Prism'))
+const ColorBends = lazy(() => import('@/components/ColorBends'))
+const Iridescence = lazy(() => import('@/components/Iridescence'))
+const MagicBento = lazy(() => import('@/components/MagicBento'))
+
+// Loading fallback for background components
+const BackgroundLoader = () => <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-pink-900/20"></div>
 
 /**
  * Landing Page Component
@@ -144,38 +149,40 @@ export function LandingPage() {
       {/* HERO SECTION - With Prism Effect */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Prism  
-            animationType="rotate"
-            timeScale={0.5}
-            height={3.5}
-            baseWidth={5.5}
-            scale={3.6}
-            hueShift={0}
-            colorFrequency={1}
-            noise={0.5}
-            glow={1}
-          />
+          <Suspense fallback={<BackgroundLoader />}>
+            <Prism  
+              animationType="rotate"
+              timeScale={0.5}
+              height={3.5}
+              baseWidth={5.5}
+              scale={3.6}
+              hueShift={0}
+              colorFrequency={1}
+              noise={0.5}
+              glow={1}
+            />
+          </Suspense>
         </div>
         
-        <div className="container px-4 sm:px-6 relative z-20">
+        <div className="container px-2 xs:px-4 sm:px-6 relative z-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center space-y-8 max-w-5xl mx-auto"
+            className="text-center space-y-6 sm:space-y-8 max-w-5xl mx-auto px-2"
           >
             <Badge variant="outline" className="mx-auto px-4 py-2 text-sm font-medium backdrop-blur-sm">
               <Sparkles className="h-3 w-3 mr-2 inline" />
               Trusted by 10,000+ Users
             </Badge>
 
-            <h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-8xl font-serif tracking-normal leading-[1.1]">
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-serif tracking-normal leading-[1.1] px-2">
               <span className="block mb-2">Shorten Links Amplify Results</span>
               
               <span className="block mt-2 italic tracking-tight">Track Everything.</span>
             </h1>
 
-            <p className="text-xl sm:text-2xl text-[rgb(207,207,207)] max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base xs:text-lg sm:text-xl md:text-2xl text-[rgb(207,207,207)] max-w-3xl mx-auto leading-relaxed px-4">
               Transform long, messy URLs into powerful branded short links with 
               real-time analytics, QR codes, and click tracking that drives growth.
             </p>
@@ -222,19 +229,19 @@ export function LandingPage() {
       </section>
 
       {/* FEATURED SECTION 1 - MagicBento Grid */}
-      <section className="relative py-16 md:py-32 overflow-hidden">
-        <div className="container px-4 sm:px-6 lg:px-8 relative z-10 max-w-full">
+      <section className="relative py-12 xs:py-16 md:py-32 overflow-hidden">
+        <div className="container px-2 xs:px-4 sm:px-6 lg:px-8 relative z-10 max-w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-4 mb-12 md:mb-20"
+            className="text-center space-y-3 xs:space-y-4 mb-8 xs:mb-12 md:mb-20"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold max-w-4xl mx-auto leading-[1.15] px-4">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold max-w-4xl mx-auto leading-[1.15] px-2 xs:px-4">
               Powerful features that make link management effortless
             </h2>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+            <p className="text-sm xs:text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-2 xs:px-4">
               From URL shortening to advanced analytics—everything you need to track, measure, and grow
             </p>
           </motion.div>
@@ -246,18 +253,20 @@ export function LandingPage() {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="w-full"
           >
-            <MagicBento items={bentoFeatures}
-            textAutoHide={true}
-            enableStars={true}
-            enableSpotlight={true}
-            enableBorderGlow={true}
-            enableTilt={true}
-            enableMagnetism={true}
-            clickEffect={true}
-            spotlightRadius={300}
-            particleCount={12}
-            glowColor="132, 0, 255" 
-            />
+            <Suspense fallback={<div className="min-h-[400px] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
+              <MagicBento items={bentoFeatures}
+                textAutoHide={true}
+                enableStars={true}
+                enableSpotlight={true}
+                enableBorderGlow={true}
+                enableTilt={true}
+                enableMagnetism={true}
+                clickEffect={true}
+                spotlightRadius={300}
+                particleCount={12}
+                glowColor="132, 0, 255" 
+              />
+            </Suspense>
           </motion.div>
         </div>
       </section>

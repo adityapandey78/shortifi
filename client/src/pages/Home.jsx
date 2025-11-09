@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
 import { Link2, Copy, Check, ExternalLink, Trash2, Edit, QrCode, BarChart3 } from 'lucide-react'
@@ -18,9 +18,14 @@ import { AuroraText } from '@/components/ui/aurora-text'
 import { Highlighter } from '@/components/ui/highlighter'
 import { SparklesText } from '@/components/ui/sparkles-text'
 import { CoolMode } from '@/components/ui/cool-mode'
-import Prism from '@/components/Prism'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Footer } from '@/components/Footer'
+
+// Lazy load Prism for better performance
+const Prism = lazy(() => import('@/components/Prism'))
+
+// Loading fallback
+const PrismLoader = () => <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-pink-900/20"></div>
 
 /**
  * Home Page Component
@@ -159,39 +164,41 @@ export function HomePage() {
     <div className="min-h-screen relative overflow-hidden flex flex-col">
       {/* Prism Background - Blurred */}
       <div className="absolute inset-0 z-0 blur-sm opacity-80">
-        <Prism 
-          animationType="rotate"
-          timeScale={0.5}
-          height={3.5}
-          baseWidth={5.5}
-          scale={3.6}
-          hueShift={0}
-          colorFrequency={1}
-          noise={0.5}
-          glow={1}
-        />
+        <Suspense fallback={<PrismLoader />}>
+          <Prism 
+            animationType="rotate"
+            timeScale={0.5}
+            height={3.5}
+            baseWidth={5.5}
+            scale={3.6}
+            hueShift={0}
+            colorFrequency={1}
+            noise={0.5}
+            glow={1}
+          />
+        </Suspense>
       </div>
 
-      <div className="flex-1 container px-4 sm:px-6 py-8 sm:py-12 relative z-10">
+      <div className="flex-1 container px-2 xs:px-4 sm:px-6 py-6 xs:py-8 sm:py-12 relative z-10">
         {/* Hero Section with Form */}
-        <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
+        <div className="max-w-4xl mx-auto space-y-4 xs:space-y-6 sm:space-y-8">
           {/* Hero Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-3 sm:space-y-4"
+            className="text-center space-y-2 xs:space-y-3 sm:space-y-4"
           >
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
             >
-              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl  tracking-normal flex flex-wrap items-center justify-center gap-x-2 gap-y-1 px-2 font-serif">
+              <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl lg:text-7xl tracking-normal flex flex-wrap items-center justify-center gap-x-2 gap-y-1 px-2 font-serif">
                 
                 <span>Shorten your</span>
                 <AuroraText className="text-bold">Loooonng</AuroraText>
-                <span className="hidden sm:inline text-2xl sm:text-3xl md:text-5xl lg:text-6xl">URLs like never before!</span>
+                <span className="hidden sm:inline text-xl xs:text-2xl sm:text-3xl md:text-5xl lg:text-6xl">URLs like never before!</span>
                 <span className="sm:hidden">URLs!</span>
               </h1>
             </motion.div>
@@ -200,7 +207,7 @@ export function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4"
+              className="text-xs xs:text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2 xs:px-4"
             >
                 The Shortifi is an{" "}
                 <Highlighter action="underline" color="#FF9800" strokeWidth={3} padding={3}>

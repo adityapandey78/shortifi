@@ -641,14 +641,55 @@ const MagicBento = ({
           @media (max-width: 599px) {
             .card-responsive {
               grid-template-columns: 1fr;
-              width: 90%;
-              margin: 0 auto;
+              width: 100%;
+              margin: 0;
               padding: 0.5rem;
+              gap: 0.75rem;
             }
             
             .card-responsive .card {
               width: 100%;
-              min-height: 180px;
+              min-height: 160px;
+              padding: 1rem;
+              font-size: 0.875rem;
+            }
+            
+            .card__title {
+              font-size: 1rem;
+              margin-bottom: 0.5rem;
+            }
+            
+            .card__description {
+              font-size: 0.8125rem;
+              line-height: 1.4;
+            }
+            
+            .card__image {
+              max-height: 200px !important;
+            }
+          }
+          
+          @media (max-width: 360px) {
+            .card-responsive {
+              padding: 0.25rem;
+              gap: 0.5rem;
+            }
+            
+            .card-responsive .card {
+              min-height: 140px;
+              padding: 0.875rem;
+            }
+            
+            .card__title {
+              font-size: 0.9375rem;
+            }
+            
+            .card__description {
+              font-size: 0.75rem;
+            }
+            
+            .card__image {
+              max-height: 180px !important;
             }
           }
         `}
@@ -705,6 +746,8 @@ const MagicBento = ({
                       <img 
                         src={card.image} 
                         alt={card.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-auto object-cover"
                         style={{ maxHeight: card.hideIconAndLabel ? '280px' : '180px' }}
                       />
