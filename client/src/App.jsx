@@ -69,7 +69,11 @@ function App() {
         <main>
           <Routes>
             {/* Root path - shows HomePage if authenticated, otherwise redirects to landing */}
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+              } />
             
             {/* Landing page for non-authenticated users */}
             <Route 
